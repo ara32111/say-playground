@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Speaking Practice</title>
+<meta name="description" content="Listen, pick, build and talk! A yummy English speaking game.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Speaking Practice 🐻🍳">
+<meta property="og:description" content="Listen · Pick · Build · Talk! 영어 말하기 놀이">
+<meta property="og:image" content="https://ara32111.github.io/speaking-practice/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://ara32111.github.io/speaking-practice/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Speaking">
+<meta name="theme-color" content="#CDEDE4">
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}
+body{margin:0;font:14px system-ui,-apple-system,sans-serif}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Gowun+Dodum&display=swap">
+<style>
+/* Layout: one-screen kitchen-tile game board; header bar + centered play area, big touch targets for iPad */
+:root{
+  --tile:#CDEDE4; --tile-2:#BFE5DA;
+  --card:#FFFDF7; --ink:#24305C; --ink-soft:#5A6590;
+  --berry:#E4407A; --blue:#2F74E0; --butter:#FFD65E; --good:#2FA866;
+  --shadow:0 6px 0 rgba(36,48,92,.18);
+  --f-display:"Andika","Gowun Dodum",system-ui,sans-serif;
+  --f-read:"Andika","Gowun Dodum",system-ui,sans-serif;
+  --f-ko:"Gowun Dodum","Apple SD Gothic Neo",system-ui,sans-serif;
+  color-scheme:light;
+}
+html,body{height:100%}
+body{background-color:var(--tile);background-image:repeating-conic-gradient(var(--tile) 0 25%, var(--tile-2) 0 50%);background-size:72px 72px;color:var(--ink);font-family:var(--f-read);-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+#app{height:100%;display:flex;flex-direction:column;padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px));padding-block:12px;gap:10px;box-sizing:border-box}
+.bar{display:flex;align-items:center;gap:10px}
+.bar .name{flex:1;min-width:0;font-family:var(--f-display);font-weight:700;font-size:clamp(18px,3vw,26px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pill{background:var(--card);border-radius:999px;padding:8px 16px;font-family:var(--f-display);font-weight:700;font-size:20px;box-shadow:var(--shadow);font-variant-numeric:tabular-nums;white-space:nowrap}
+button{font:inherit;color:inherit;border:0;cursor:pointer;background:none}
+button:focus-visible{outline:4px solid var(--blue);outline-offset:3px}
+.iconbtn{background:var(--card);width:56px;height:56px;border-radius:18px;font-size:28px;box-shadow:var(--shadow);flex:none}
+.iconbtn[aria-pressed="true"]{background:var(--butter)}
+.iconbtn:active,.big:active,.card:active,.tile:active,.stagebtn:active,.weekbtn:active,.daybtn:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(36,48,92,.18)}
+main{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;align-items:center;gap:clamp(12px,2.4vh,22px);text-align:center;position:relative;padding-block:6px}
+main::before,main::after{content:"";margin:auto}
+.guide{font-family:var(--f-ko);font-size:15px;color:var(--ink-soft);background:rgba(255,253,247,.75);padding:6px 14px;border-radius:12px;max-width:640px}
+.chef{display:flex;align-items:flex-end;gap:10px;max-width:min(760px,100%)}
+.chef .face{font-size:clamp(44px,7vmin,64px);line-height:1;flex:none}
+.bubble{background:var(--card);border-radius:24px 24px 24px 6px;padding:14px 20px;font-size:clamp(22px,4vmin,34px);font-weight:400;box-shadow:var(--shadow);text-align:left;min-width:0}
+.bubble.me{border-radius:24px 24px 6px 24px;background:var(--butter)}
+.pic{display:flex;flex-direction:column;align-items:center;gap:2px}
+.pic .em{font-size:clamp(96px,20vmin,180px);line-height:1;filter:drop-shadow(0 8px 0 rgba(36,48,92,.15))}
+.pic.md .em{font-size:clamp(66px,12vmin,110px)}
+.ko{font-family:var(--f-ko);font-size:17px;color:var(--ink-soft);background:rgba(255,253,247,.85);border-radius:10px;padding:2px 10px}
+.w-food{color:var(--blue)} .w-taste{color:var(--berry)}
+.big{background:var(--berry);color:#fff;font-family:var(--f-display);font-weight:700;font-size:clamp(22px,3.6vmin,30px);padding:16px 30px;border-radius:22px;box-shadow:0 6px 0 #A82457;min-height:64px}
+.big.alt{background:var(--card);color:var(--ink);box-shadow:var(--shadow)}
+.big.go{background:var(--good);box-shadow:0 6px 0 #1E7547}
+.row{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;align-items:center}
+.answer{display:flex;align-items:center;gap:14px;background:var(--card);padding:14px 22px;border-radius:24px;box-shadow:var(--shadow);font-size:clamp(24px,4.4vmin,38px);font-weight:400;max-width:100%;box-sizing:border-box;text-align:left}
+.answer .tface{font-size:clamp(44px,8vmin,70px);flex:none}
+.dots{display:flex;gap:14px;align-items:center;font-family:var(--f-ko);font-size:17px;color:var(--ink-soft);flex-wrap:wrap;justify-content:center}
+.dot{width:58px;height:58px;border-radius:50%;background:var(--card);box-shadow:var(--shadow);font-size:28px}
+.dot.on{background:var(--butter)}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;width:min(780px,100%)}
+.card{background:var(--card);border-radius:24px;padding:14px 8px;box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;gap:4px;min-height:130px;justify-content:center}
+.card .tface{font-size:clamp(46px,8vmin,72px);line-height:1}
+.card .tw{font-size:clamp(20px,3.4vmin,28px);font-weight:400;color:var(--berry);overflow-wrap:anywhere}
+.card.find .tw{color:var(--blue)}
+.card .ko{font-size:14px;padding:0 6px}
+.card.right{background:#DDF6E7;outline:5px solid var(--good)}
+.card.wrong{opacity:.35}
+.slots{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;min-height:72px;max-width:100%}
+.slot{min-width:80px;height:68px;border-radius:18px;border:3px dashed var(--ink-soft);display:flex;align-items:center;justify-content:center;padding:0 14px;font-size:clamp(22px,3.8vmin,32px);font-weight:400;background:rgba(255,253,247,.5);white-space:nowrap}
+.slot.filled{border:3px solid transparent;background:var(--card);box-shadow:var(--shadow)}
+.tiles{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;max-width:100%}
+.tile{background:var(--butter);border-radius:18px;padding:0 20px;height:68px;font-size:clamp(22px,3.8vmin,32px);font-weight:400;box-shadow:0 6px 0 #C9A12C;white-space:nowrap}
+.tile.used{visibility:hidden}
+.mom{display:flex;flex-direction:column;gap:8px;align-items:center;background:rgba(255,253,247,.8);border-radius:22px;padding:12px 16px;max-width:100%;box-sizing:border-box}
+.mom .lbl{font-family:var(--f-ko);font-size:15px;color:var(--ink-soft)}
+.mom .big{font-family:var(--f-ko);font-weight:400}
+.hint{font-size:clamp(20px,3.4vmin,28px);font-weight:400;color:var(--ink-soft);min-height:1.4em}
+.progress{font-family:var(--f-display);font-size:18px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.hero h1{font-family:var(--f-display);font-weight:700;font-size:clamp(32px,6vmin,56px);margin:0;line-height:1.08;text-wrap:balance}
+.hero p{margin:6px 0 0;font-family:var(--f-ko);font-size:17px;color:var(--ink-soft)}
+.plates{display:flex;gap:6px;justify-content:center;font-size:clamp(32px,5.6vmin,48px)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;width:min(760px,100%)}
+.weekbtn,.daybtn,.stagebtn{background:var(--card);border-radius:26px;padding:16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;text-align:left;min-height:104px;min-width:0}
+.weekbtn .wem{font-size:48px;flex:none}
+.lbl-s{font-family:var(--f-display);font-weight:700;font-size:15px;color:var(--ink-soft);display:block;letter-spacing:.04em}
+.t{font-family:var(--f-display);font-weight:700;font-size:clamp(19px,3vmin,25px);display:block;line-height:1.15}
+.k{font-family:var(--f-ko);font-size:15px;color:var(--ink-soft);display:block;margin-top:4px}
+.meter{margin-left:auto;flex:none;font-family:var(--f-display);font-weight:700;font-size:18px;color:var(--ink-soft);font-variant-numeric:tabular-nums;text-align:center}
+.meter b{display:block;font-size:30px;line-height:1}
+.daybtn .ems{font-size:24px;display:block;margin-top:4px;letter-spacing:2px}
+.daybtn.soon{opacity:.55;box-shadow:none;background:rgba(255,253,247,.6);cursor:default}
+.daybtn.review{background:var(--butter)}
+.stagebtn .num{flex:none;width:52px;height:52px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;font-family:var(--f-display);font-weight:700;font-size:26px}
+.stagebtn.done .num{background:var(--butter)}
+.stagebtn .stk{margin-left:auto;font-size:34px;flex:none}
+.small{font-family:var(--f-ko);font-size:15px;color:var(--ink-soft);background:rgba(255,253,247,.85);padding:8px 14px;border-radius:999px}
+.namebox{display:flex;flex-direction:column;gap:14px;align-items:center;background:var(--card);border-radius:28px;padding:24px;box-shadow:var(--shadow);width:min(520px,100%);box-sizing:border-box}
+.namebox label{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,4.6vmin,40px)}
+.namebox input{font-family:var(--f-read);font-size:32px;font-weight:700;color:var(--ink);text-align:center;width:100%;box-sizing:border-box;padding:12px 16px;border-radius:18px;border:3px solid var(--tile-2);background:#fff;-webkit-user-select:text;user-select:text}
+.namebox input:focus{outline:none;border-color:var(--blue)}
+.namebox .note{font-family:var(--f-ko);font-size:15px;color:var(--ink-soft);margin:0}
+.reward .medal{font-size:clamp(110px,22vmin,200px);line-height:1;animation:pop .6s ease-out}
+.reward h2{font-family:var(--f-display);font-weight:700;font-size:clamp(32px,6vmin,54px);margin:0}
+.burst{position:fixed;pointer-events:none;font-size:34px;z-index:20;animation:fly 1.1s ease-out forwards}
+.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+@keyframes pop{0%{transform:scale(.3)}70%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes fly{from{transform:translate(0,0) scale(.6);opacity:1}to{transform:translate(var(--dx),var(--dy)) scale(1.2);opacity:0}}
+/* one-line text: script shrinks these to fit their width before letting them wrap */
+.hero{width:100%}
+.hero h1,.bubble,.answer .txt,.hint,.t,.namebox label{white-space:nowrap;overflow:hidden}
+.answer .txt{display:block;min-width:0}
+.namebox label{display:block;max-width:100%}
+@media (max-width:620px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.grid2{grid-template-columns:1fr}}
+
+/* ===== PHONE layout (chosen on entry, or by the toggle on home) ===== */
+:root[data-device="phone"] .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+:root[data-device="phone"] .grid2{grid-template-columns:1fr;gap:10px}
+:root[data-device="phone"] #app{gap:8px;padding-block:8px}
+:root[data-device="phone"] .bar{gap:8px}
+:root[data-device="phone"] .bar .name{font-size:16px}
+:root[data-device="phone"] .iconbtn{width:44px;height:44px;font-size:21px;border-radius:14px}
+:root[data-device="phone"] .pill{font-size:15px;padding:6px 12px}
+:root[data-device="phone"] main{gap:12px}
+:root[data-device="phone"] .chef{gap:6px}
+:root[data-device="phone"] .chef .face{font-size:34px}
+:root[data-device="phone"] .bubble{font-size:20px;padding:10px 14px;border-radius:18px 18px 18px 6px}
+:root[data-device="phone"] .pic .em{font-size:78px}
+:root[data-device="phone"] .pic.md .em{font-size:56px}
+:root[data-device="phone"] .ko{font-size:14px}
+:root[data-device="phone"] .answer{font-size:20px;padding:10px 14px;gap:10px}
+:root[data-device="phone"] .answer .tface{font-size:38px}
+:root[data-device="phone"] .big{font-size:18px;padding:12px 18px;min-height:50px;border-radius:18px}
+:root[data-device="phone"] .card{min-height:96px;padding:8px 4px;border-radius:18px}
+:root[data-device="phone"] .card .tface{font-size:40px}
+:root[data-device="phone"] .card .tw{font-size:17px}
+:root[data-device="phone"] .slots,:root[data-device="phone"] .tiles{gap:8px}
+:root[data-device="phone"] .slot,:root[data-device="phone"] .tile{font-size:18px;height:50px;border-radius:14px}
+:root[data-device="phone"] .slot{min-width:56px;padding:0 10px}
+:root[data-device="phone"] .tile{padding:0 12px}
+:root[data-device="phone"] .hint{font-size:18px}
+:root[data-device="phone"] .hero h1{font-size:28px}
+:root[data-device="phone"] .hero p,:root[data-device="phone"] .guide,:root[data-device="phone"] .small{font-size:13px}
+:root[data-device="phone"] .plates{font-size:32px}
+:root[data-device="phone"] .weekbtn,:root[data-device="phone"] .daybtn,:root[data-device="phone"] .stagebtn{min-height:76px;padding:12px;gap:10px;border-radius:20px}
+:root[data-device="phone"] .weekbtn .wem{font-size:36px}
+:root[data-device="phone"] .t{font-size:19px}
+:root[data-device="phone"] .k{font-size:13px}
+:root[data-device="phone"] .stagebtn .num{width:42px;height:42px;font-size:21px}
+:root[data-device="phone"] .meter{font-size:15px}
+:root[data-device="phone"] .meter b{font-size:24px}
+:root[data-device="phone"] .dot{width:48px;height:48px;font-size:22px}
+:root[data-device="phone"] .mom{padding:10px 12px}
+:root[data-device="phone"] .mom .lbl{font-size:13px}
+:root[data-device="phone"] .reward .medal{font-size:110px}
+:root[data-device="phone"] .reward h2{font-size:30px}
+:root[data-device="phone"] .namebox{padding:18px}
+:root[data-device="phone"] .namebox label{font-size:26px}
+:root[data-device="phone"] .namebox input{font-size:26px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div id="app">
+  <header class="bar">
+    <button class="iconbtn" id="homeBtn" aria-label="Home">🏠</button>
+    <button class="iconbtn" id="backBtn" aria-label="Back" hidden>⬅️</button>
+    <div class="name" id="barName">Yummy Kitchen</div>
+    <button class="iconbtn" id="slowBtn" aria-label="Slow voice" aria-pressed="false" title="천천히 말하기">🐢</button>
+    <div class="pill" id="starPill" aria-label="Stars">⭐ 0</div>
+  </header>
+  <main id="stage"></main>
+</div>
+
+<script src="days.js"></script>
+<script src="audio/shared.js"></script>
+<script>
+const BOOKD = window.BOOK || {weeks:[],days:[]};
+const DAYS = BOOKD.days;
+const dayById = id => DAYS.find(d=>d.id===id);
+const STAGES = [
+  {id:'learn', t:'Look & Listen', k:'듣고 세 번 따라 말하기'},
+  {id:'pick',  t:'Pick It!',      k:'질문 듣고 답 고르기'},
+  {id:'build', t:'Build It',      k:'블록으로 문장 만들기'},
+  {id:'talk',  t:'Your Turn',     k:'엄마랑 묻고 답하기'}
+];
+
+/* ---------- state ---------- */
+const state = {name:'', stars:0, done:{}, trophies:{}, slow:false, device:'auto'};
+try{ Object.assign(state, JSON.parse(localStorage.getItem('tasteKitchen')||'{}')); }catch(e){}
+state.done = state.done || {}; state.trophies = state.trophies || {};
+['learn','pick','build','talk'].forEach(s=>{ if(state.done[s]){ state.done['w3d4:'+s]=true; delete state.done[s]; } }); // v1 progress → taste day
+function save(){ try{ localStorage.setItem('tasteKitchen', JSON.stringify(state)); }catch(e){} }
+const $ = s => document.querySelector(s);
+const stage = $('#stage');
+function updateBar(){ $('#starPill').textContent = '⭐ ' + state.stars; $('#slowBtn').setAttribute('aria-pressed', state.slow); }
+function addStar(n=1){ state.stars += n; save(); updateBar(); }
+const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const wait = ms => new Promise(r=>setTimeout(r,ms));
+const esc = s => String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const spokenName = () => /[A-Za-z]/.test(state.name) ? state.name.replace(/[^A-Za-z \-']/g,'').trim() : '';
+const stageDone = (d,s) => !!state.done[d.id+':'+s];
+const dayCount = d => STAGES.filter(s=>stageDone(d,s.id)).length;
+
+/* ---------- text helpers ---------- */
+function mark(text, it){
+  let s = esc(text); const found = [];
+  const rep = []; if(it.b) rep.push([it.b,'w-food']); if(it.p) rep.push([it.p,'w-taste']);
+  rep.sort((x,y)=>y[0].length-x[0].length);
+  rep.forEach(([w,c])=>{
+    const re = new RegExp('\\b'+esc(w).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','i');
+    s = s.replace(re, m=>{ found.push([m,c]); return '\u0001'+(found.length-1)+'\u0002'; });
+  });
+  return s.replace(/\u0001(\d+)\u0002/g, (_,i)=>`<span class="${found[i][1]}">${found[i][0]}</span>`);
+}
+function chunkCls(c, it){ const l=c.toLowerCase(); if(it.b && l.includes(it.b.toLowerCase())) return 'w-food'; if(it.p && l.includes(it.p.toLowerCase())) return 'w-taste'; return ''; }
+function pic(e, ko, cls=''){ return `<div class="pic ${cls}"><span class="em" aria-hidden="true">${e}</span>${ko?`<span class="ko">${esc(ko)}</span>`:''}</div>`; }
+const qVis = it => it.show || it.e;                 // what the question is about
+const qKo  = it => it.show ? '' : (it.ko||'');
+function ansIcon(day, it){ return day.mode==='attr' ? day.attrs[it.ans].e : (it.e + (it.badge||'')); }
+
+/* ---------- voice: pre-recorded clips, device speech only for other names ---------- */
+const CL = () => (window.CLIPS || {});
+const player = new Audio(); player.preload = 'auto';
+let curFin = null, unlocked = false, ac = null, speakToken = 0;
+function unlockAudio(){
+  try{ ac = ac || new (window.AudioContext||window.webkitAudioContext)(); if(ac.state==='suspended') ac.resume(); }catch(e){}
+  if(unlocked || !CL()['Hello!']) return;
+  unlocked = true;
+  try{
+    player.muted = true; player.src = CL()['Hello!'];
+    const p = player.play();
+    if(p && p.then) p.then(()=>{ if(player.muted){ player.pause(); player.muted=false; } }).catch(()=>{ player.muted=false; unlocked=false; });
+  }catch(e){ player.muted=false; }
+}
+['pointerdown','touchend','click','keydown'].forEach(ev=>document.addEventListener(ev, unlockAudio, {capture:true}));
+function stopVoice(){
+  ++speakToken;
+  try{ player.pause(); }catch(e){}
+  if(curFin){ const f=curFin; curFin=null; f(); }
+  try{ if('speechSynthesis' in window && (speechSynthesis.speaking||speechSynthesis.pending)) speechSynthesis.cancel(); }catch(e){}
+}
+function playClip(src){
+  if(curFin){ const f=curFin; curFin=null; f(); }
+  return new Promise(res=>{
+    let done=false;
+    const fin=()=>{ if(done) return; done=true; if(curFin===fin) curFin=null; player.onended=player.onerror=null; res(); };
+    curFin = fin;
+    try{
+      player.pause(); player.muted = false; player.src = src;
+      player.defaultPlaybackRate = player.playbackRate = state.slow ? 0.75 : 1;
+      player.onended = fin; player.onerror = fin;
+      const p = player.play(); if(p && p.catch) p.catch(fin);
+      setTimeout(fin, 9000);
+    }catch(e){ fin(); }
+  });
+}
+function speakName(text){
+  return new Promise(res=>{
+    try{
+      if(!('speechSynthesis' in window) || !text) return res();
+      const ss = speechSynthesis; if(ss.speaking || ss.pending) ss.cancel();
+      const u = new SpeechSynthesisUtterance(text); u.lang='en-US'; u.rate=0.9;
+      let done=false; const fin=()=>{ if(!done){done=true;res();} };
+      u.onend=fin; u.onerror=fin; setTimeout(fin, 2500); ss.speak(u);
+    }catch(e){ res(); }
+  });
+}
+function say(text){ const c=CL()[text] || CL()[String(text).replace(/\.$/,'')]; return c ? playClip(c) : Promise.resolve(); }
+async function sayAll(...lines){ const my=++speakToken; for(const l of lines){ if(my!==speakToken) return; await say(l); if(my!==speakToken) return; await wait(250);} }
+function sayOne(t){ ++speakToken; return say(t); }
+/* "Great job!" → "Great job, Daisy!" when recorded, else clip + device voice for the name */
+async function praise(base, named){
+  const my=++speakToken; const n=spokenName();
+  const full = n ? named(n) : base;
+  if(CL()[full]) return say(full);
+  await say(base); if(my===speakToken && n) await speakName(n);
+}
+const loaded = {};
+function loadAudio(id){
+  if(!loaded[id]) loaded[id] = new Promise(res=>{
+    const s=document.createElement('script'); s.src='audio/'+id+'.js';
+    s.onload=()=>res(); s.onerror=()=>{ delete loaded[id]; res(); };
+    document.head.appendChild(s);
+  });
+  return loaded[id];
+}
+
+/* ---------- sound fx ---------- */
+function tone(notes){
+  try{
+    ac = ac || new (window.AudioContext||window.webkitAudioContext)();
+    if(ac.state==='suspended') ac.resume();
+    let t = ac.currentTime;
+    notes.forEach(([f,d])=>{
+      const o=ac.createOscillator(), g=ac.createGain();
+      o.type='triangle'; o.frequency.value=f;
+      g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.25,t+.02); g.gain.exponentialRampToValueAtTime(.0001,t+d);
+      o.connect(g).connect(ac.destination); o.start(t); o.stop(t+d+.02); t+=d*.8;
+    });
+  }catch(e){}
+}
+const ding = () => tone([[784,.14],[1047,.22]]);
+const boop = () => tone([[260,.18]]);
+const fanfare = () => tone([[523,.14],[659,.14],[784,.14],[1047,.4]]);
+function burst(x, y, set='⭐🎉✨'){
+  const chars=[...set];
+  for(let i=0;i<14;i++){
+    const s=document.createElement('span'); s.className='burst'; s.textContent=chars[i%chars.length];
+    s.style.left=(x-17)+'px'; s.style.top=(y-17)+'px';
+    const ang=Math.random()*Math.PI*2, r=90+Math.random()*120;
+    s.style.setProperty('--dx', Math.cos(ang)*r+'px'); s.style.setProperty('--dy', Math.sin(ang)*r+'px');
+    document.body.appendChild(s); setTimeout(()=>s.remove(),1200);
+  }
+}
+function burstAt(el, set){ const r=el.getBoundingClientRect(); burst(r.left+r.width/2, r.top+r.height/2, set); }
+function shake(el){ el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); }
+
+/* ---------- navigation ---------- */
+let backFn = null;
+function nav(title, back){
+  stopVoice(); $('#barName').textContent = title;
+  backFn = back || null; $('#backBtn').hidden = !back;
+  stage.scrollTop = 0;
+}
+
+function nameScreen(isNewFriend){
+  nav('Yummy Kitchen');
+  stage.innerHTML = `
+    <div class="hero"><div class="plates" aria-hidden="true">🍌🥕🍳🥤🍩</div><h1>Welcome to Yummy Kitchen!</h1></div>
+    <form class="namebox" id="nameForm">
+      <label for="kidName">What's your name?</label>
+      <input id="kidName" maxlength="12" autocomplete="off" autocapitalize="words" placeholder="Daisy" value="${isNewFriend?'':esc(state.name||'Daisy')}">
+      <p class="note">영어 이름으로 쓰면 곰 셰프가 이름을 불러줘요. (예: Daisy, Minjun)<br>한글로 써도 화면에는 잘 나와요.</p>
+      <button class="big go" type="submit">Let's cook! 🍳</button>
+    </form>
+    ${isNewFriend?'<p class="small">새 친구로 시작하면 이 기기의 별과 스티커가 처음부터 다시 시작돼요.</p>':''}`;
+  const input = $('#kidName');
+  $('#nameForm').onsubmit = e=>{
+    e.preventDefault();
+    const v = input.value.trim().slice(0,12);
+    if(!v){ shake(input); boop(); input.focus(); return; }
+    if(isNewFriend){ state.stars=0; state.done={}; state.trophies={}; }
+    state.name = v; save(); updateBar(); ding(); home();
+    praise("Hi! Let's cook!", n=>`Hi, ${n}! Let's cook!`);
+  };
+}
+
+function home(){
+  if(!state.name) return nameScreen(false);
+  nav(`${state.name}'s Kitchen`);
+  stage.innerHTML = `
+    <div class="hero"><h1>Hi, <span id="heroName"></span>!<br>What would you like to eat?</h1><p>Circle Time 4 · 주차를 골라요</p></div>
+    <div class="grid2">
+      ${BOOKD.weeks.map(w=>{
+        const ds = DAYS.filter(d=>d.week===w.n && !d.soon);
+        const got = ds.reduce((a,d)=>a+dayCount(d),0), all = ds.length*4;
+        return `<button class="weekbtn" data-w="${w.n}">
+          <span class="wem" aria-hidden="true">${w.e}</span>
+          <span style="min-width:0"><span class="lbl-s">WEEK ${w.n}</span><span class="t">${esc(w.title)}</span></span>
+          <span class="meter">${state.trophies[w.n]?'🏆':'<b>⭐</b>'}${got}/${all}</span>
+        </button>`;}).join('')}
+    </div>
+    <div class="row">
+      <button class="small" id="soundTest">🔊 소리 테스트</button>
+      <button class="small" id="devBtn">${document.documentElement.dataset.device==='phone'?'📱 폰 화면 → 아이패드로 바꾸기':'📲 아이패드 화면 → 폰으로 바꾸기'}</button>
+      <button class="small" id="rename">✏️ 이름 바꾸기</button>
+      <button class="small" id="newFriend">👤 다른 친구로 시작하기</button>
+    </div>`;
+  $('#heroName').textContent = state.name;
+  stage.querySelectorAll('.weekbtn').forEach(b=>b.onclick=()=>week(+b.dataset.w));
+  $('#soundTest').onclick = ()=>{ ding(); sayOne('Hello!'); };
+  $('#rename').onclick = ()=>nameScreen(false);
+  $('#devBtn').onclick = ()=>{ state.device = document.documentElement.dataset.device==='phone' ? 'tablet' : 'phone'; save(); applyDevice(); home(); };
+  $('#newFriend').onclick = ()=>nameScreen(true);
+}
+
+function week(n){
+  const w = BOOKD.weeks.find(x=>x.n===n);
+  nav(`Week ${n} · ${w.title}`, home);
+  const ds = DAYS.filter(d=>d.week===n);
+  stage.innerHTML = `
+    <div class="hero"><div class="plates" aria-hidden="true">${w.e}</div><h1>${esc(w.title)}</h1><p>하고 싶은 Day를 골라요</p></div>
+    <div class="grid2">
+      ${ds.map(d=> d.soon ? `
+        <button class="daybtn soon" disabled><span style="min-width:0"><span class="lbl-s">DAY ${d.day}</span><span class="t">${esc(d.title)}</span><span class="k">Coming soon · 교재 사진을 기다려요</span></span></button>` : `
+        <button class="daybtn" data-d="${d.id}">
+          <span style="min-width:0"><span class="lbl-s">DAY ${d.day}</span><span class="t">${esc(d.title)}</span><span class="ems" aria-hidden="true">${d.items.map(i=>i.e).join('')}</span></span>
+          <span class="meter"><b>${dayCount(d)===4?'🌟':'⭐'}</b>${dayCount(d)}/4</span>
+        </button>`).join('')}
+      <button class="daybtn review" id="reviewBtn">
+        <span style="min-width:0"><span class="lbl-s">REVIEW</span><span class="t">Week ${n} Review</span><span class="k">이번 주 문장 섞어서 복습하기</span></span>
+        <span class="meter"><b>${state.trophies[n]?'🏆':'🎯'}</b></span>
+      </button>
+    </div>`;
+  stage.querySelectorAll('.daybtn[data-d]').forEach(b=>b.onclick=()=>dayMenu(b.dataset.d));
+  $('#reviewBtn').onclick = ()=>review(n);
+}
+
+async function dayMenu(id){
+  const d = dayById(id);
+  nav(`Week ${d.week} · Day ${d.day}`, ()=>week(d.week));
+  stage.innerHTML = `<div class="progress">Loading…</div>`;
+  await loadAudio(id);
+  if($('#barName').textContent !== `Week ${d.week} · Day ${d.day}`) return;
+  const stk = i => d.items[i % d.items.length].e;
+  stage.innerHTML = `
+    <div class="hero"><div class="plates" aria-hidden="true">${d.items.map(i=>i.e).join('')}</div><h1>${esc(d.title)}</h1><p>Week ${d.week} · Day ${d.day}</p></div>
+    <div class="grid2">
+      ${STAGES.map((s,i)=>`
+        <button class="stagebtn ${stageDone(d,s.id)?'done':''}" data-s="${s.id}">
+          <span class="num">${i+1}</span>
+          <span style="min-width:0"><span class="t">${s.t}</span><span class="k">${s.k}</span></span>
+          <span class="stk" aria-hidden="true">${stageDone(d,s.id)?stk(i):''}</span>
+        </button>`).join('')}
+    </div>
+    <div class="guide">엄마 가이드: 1번부터 하면 좋아요. 🐢 버튼을 누르면 천천히 말해요.</div>`;
+  stage.querySelectorAll('.stagebtn').forEach(b=>b.onclick=()=>({learn,pick,build,talk})[b.dataset.s](d));
+}
+
+function reward(d, sid){
+  const i = STAGES.findIndex(s=>s.id===sid);
+  const sticker = d.items[i % d.items.length].e;
+  state.done[d.id+':'+sid]=true; save();
+  stage.innerHTML = `
+    <div class="reward"><div class="medal" aria-hidden="true">${sticker}</div><h2>Great job, <span id="rwName"></span>!</h2>
+      <p class="guide">스티커 ${sticker} 를 받았어요! (${STAGES[i].t} 완료)</p></div>
+    <div class="row"><button class="big alt" id="toDay">⬅️ Day ${d.day}</button>${i<3?`<button class="big go" id="nextStage">Next: ${STAGES[i+1].t} ➜</button>`:''}</div>`;
+  $('#rwName').textContent = state.name;
+  fanfare(); burst(innerWidth/2, innerHeight/2, '⭐🎉✨'+sticker);
+  (async()=>{ await praise('Great job!', n=>`Great job, ${n}!`); await wait(200); say('You got a sticker!'); })();
+  $('#toDay').onclick = ()=>dayMenu(d.id);
+  if(i<3) $('#nextStage').onclick = ()=>({learn,pick,build,talk})[STAGES[i+1].id](d);
+}
+function stageNav(d, sid){ const s=STAGES.find(x=>x.id===sid); nav(`Day ${d.day} · ${s.t}`, ()=>dayMenu(d.id)); }
+
+/* Stage 1: Look & Listen */
+function learn(d){
+  stageNav(d,'learn'); let i=0;
+  function show(){
+    const it = d.items[i]; let count=0;
+    stage.innerHTML = `
+      <div class="progress">${i+1} / ${d.items.length}</div>
+      <div class="chef"><div class="face" aria-hidden="true">🐻</div><div class="bubble">${mark(it.q,it)}</div></div>
+      <button id="foodBtn" aria-label="Listen again">${pic(qVis(it), qKo(it))}</button>
+      <div id="ansArea"><button class="big" id="revealBtn">Show me! 👀</button></div>
+      <div class="guide">엄마 가이드: 그림을 누르면 질문을 다시 들어요. 동그라미를 하나씩 누르며 세 번 따라 말해요.</div>`;
+    sayAll(it.q);
+    $('#foodBtn').onclick = ()=>sayAll(it.q);
+    $('#revealBtn').onclick = ()=>{
+      $('#ansArea').innerHTML = `
+        <div class="answer"><span class="tface" aria-hidden="true">${ansIcon(d,it)}</span><span class="txt">${mark(it.a,it)}</span></div>
+        <div class="row" style="margin-top:14px"><div class="dots"><span>Say it 3 times</span>
+          ${[0,1,2].map(n=>`<button class="dot" aria-label="repeat ${n+1}">🗣️</button>`).join('')}</div></div>
+        <div class="row" style="margin-top:14px" id="nextRow"></div>`;
+      sayAll(it.a);
+      stage.querySelectorAll('.dot').forEach(dt=>dt.onclick=()=>{
+        sayOne(it.a);
+        if(!dt.classList.contains('on')){ dt.classList.add('on'); dt.textContent='⭐'; count++; ding();
+          if(count===3){ addStar(); burstAt(dt);
+            $('#nextRow').innerHTML = `<button class="big go" id="nextBtn">${i<d.items.length-1?'Next ➜':'Finish 🎉'}</button>`;
+            $('#nextBtn').onclick = ()=>{ i++; i<d.items.length ? show() : reward(d,'learn'); };
+          }
+        }
+      });
+    };
+  }
+  show();
+}
+
+/* one "pick" round, shared by Pick It! and Week Review */
+function pickRound(d, it, label, onDone){
+  let locked=false, opts;
+  if(d.mode==='attr'){
+    const others = shuffle(Object.keys(d.attrs).filter(k=>k!==it.ans)).slice(0,3);
+    opts = shuffle([it.ans, ...others]).map(k=>({key:k, e:d.attrs[k].e, w:k, ko:d.attrs[k].ko}));
+  }else{
+    const others = shuffle(d.items.filter(x=>x.w!==it.w)).slice(0,3);
+    opts = shuffle([it, ...others]).map(x=>({key:x.w, e:x.e, w:x.w, ko:x.ko||''}));
+  }
+  const correct = d.mode==='attr' ? it.ans : it.w;
+  const visual = d.mode==='attr' ? pic(it.e, it.ko, 'md') : (it.show ? pic(it.show,'','md') : pic('👂','Listen!','md'));
+  stage.innerHTML = `
+    <div class="progress">${label}</div>
+    <div class="chef"><div class="face" aria-hidden="true">🐻</div><div class="bubble">${mark(it.q,it)}</div><button class="iconbtn" id="again" aria-label="Listen again">🔊</button></div>
+    ${visual}
+    <div class="cards">${opts.map(o=>`
+      <button class="card ${d.mode==='attr'?'':'find'}" data-k="${esc(o.key)}"><span class="tface" aria-hidden="true">${o.e}</span><span class="tw">${esc(o.w)}</span>${o.ko?`<span class="ko">${esc(o.ko)}</span>`:''}</button>`).join('')}
+    </div>
+    <div class="hint" id="hint"></div>`;
+  const listen = () => d.mode==='attr' ? sayAll(it.q) : sayAll(it.q, it.a);
+  listen(); $('#again').onclick = listen;
+  stage.querySelectorAll('.card').forEach(c=>c.onclick=async ()=>{
+    if(locked) return;
+    const k=c.dataset.k;
+    if(k===correct){
+      locked=true; c.classList.add('right'); ding(); burstAt(c); addStar();
+      $('#hint').innerHTML = mark(it.a,it);
+      await sayAll(it.a); await wait(500); onDone();
+    }else{ c.classList.add('wrong'); boop(); shake(c); sayOne(k); }
+  });
+}
+
+/* Stage 2: Pick It! */
+function pick(d){
+  stageNav(d,'pick'); const rounds = shuffle(d.items); let i=0;
+  const next = ()=>{ if(i<rounds.length){ const it=rounds[i]; i++; pickRound(d, it, `${i} / ${rounds.length}`, next); } else reward(d,'pick'); };
+  next();
+}
+
+/* Stage 3: Build It */
+function build(d){
+  stageNav(d,'build'); const rounds = shuffle(d.items); let i=0;
+  function show(){
+    const it = rounds[i], words = it.chunks;
+    let order = shuffle(words.map((w,n)=>n));
+    for(let t=0; t<5 && order.every((v,n)=>v===n); t++) order = shuffle(order);
+    let pos=0;
+    stage.innerHTML = `
+      <div class="progress">${i+1} / ${rounds.length}</div>
+      <div class="chef"><div class="face" aria-hidden="true">🐻</div><div class="bubble">${mark(it.q,it)}</div><button class="iconbtn" id="again" aria-label="Listen again">🔊</button></div>
+      <div class="row">${pic(qVis(it), qKo(it), 'md')}<span class="pic md"><span class="em" aria-hidden="true">${d.mode==='attr'||it.show?ansIcon(d,it):(it.badge||'💬')}</span></span></div>
+      <div class="slots">${words.map((w,n)=>`<div class="slot" id="s${n}"></div>`).join('')}</div>
+      <div class="tiles">${order.map(n=>`<button class="tile" data-n="${n}"><span class="${chunkCls(words[n],it)}">${esc(words[n])}</span></button>`).join('')}</div>
+      <div class="guide">엄마 가이드: 문장 순서대로 블록을 눌러요. 막히면 첫 블록을 같이 찾아 주세요.</div>`;
+    sayAll(it.q); $('#again').onclick=()=>sayAll(it.q);
+    stage.querySelectorAll('.tile').forEach(t=>t.onclick=async ()=>{
+      const n=+t.dataset.n;
+      if(n===pos){
+        const s=$('#s'+n); s.innerHTML=t.innerHTML; s.classList.add('filled'); t.classList.add('used');
+        sayOne(words[n].replace(/\.$/,'')); pos++;
+        if(pos===words.length){
+          ding(); addStar(); burstAt($('.slots'));
+          await wait(400); await sayAll(it.a); await wait(500);
+          i++; i<rounds.length ? show() : reward(d,'build');
+        }
+      }else{ boop(); shake(t); }
+    });
+  }
+  show();
+}
+
+/* Stage 4: Your Turn (with Mom) */
+function talk(d){
+  stageNav(d,'talk');
+  const rounds = [...shuffle(d.items).map(it=>({it,mode:'answer'})), ...shuffle(d.items).slice(0,2).map(it=>({it,mode:'ask'}))];
+  let i=0;
+  function show(){
+    const {it,mode} = rounds[i];
+    if(mode==='answer'){
+      stage.innerHTML = `
+        <div class="progress">${i+1} / ${rounds.length}</div>
+        <div class="chef"><div class="face" aria-hidden="true">🐻</div><div class="bubble">${mark(it.q,it)}</div><button class="iconbtn" id="again" aria-label="Listen again">🔊</button></div>
+        ${pic(d.mode==='find' && !it.show ? it.e : qVis(it), d.mode==='find' && !it.show ? (it.ko||'') : qKo(it), 'md')}
+        <div class="bubble me">🎤 Your turn! Say it!</div>
+        <div class="hint" id="hint"></div>
+        <div class="row"><button class="big alt" id="help">👂 Help</button></div>
+        <div class="mom"><span class="lbl">엄마 체크 · "${esc(it.a)}" 라고 말했나요?</span>
+          <div class="row"><button class="big alt" id="retry">🔁 한 번 더</button><button class="big go" id="good">⭐ 잘했어요!</button></div></div>`;
+      sayAll(it.q); $('#again').onclick=()=>sayAll(it.q);
+      $('#help').onclick=()=>{ $('#hint').innerHTML = `${ansIcon(d,it)} ${mark(it.a,it)}`; sayAll(it.a); };
+    }else{
+      stage.innerHTML = `
+        <div class="progress">${i+1} / ${rounds.length}</div>
+        <div class="bubble me">🔄 Switch! Now <b>you</b> ask Mom!</div>
+        ${pic(qVis(it), qKo(it), 'md')}
+        <div class="hint" id="hint"></div>
+        <div class="row"><button class="big alt" id="help">👂 Help</button></div>
+        <div class="mom"><span class="lbl">아이가 "${esc(it.q)}" 하고 물으면 엄마가 대답해 주세요.</span>
+          <div class="row"><button class="big alt" id="retry">🔁 한 번 더</button><button class="big go" id="good">⭐ 잘했어요!</button></div></div>`;
+      sayOne('Now you ask Mom!');
+      $('#help').onclick=()=>{ $('#hint').innerHTML = mark(it.q,it); sayAll(it.q); };
+    }
+    $('#retry').onclick=()=>{ mode==='answer' ? sayAll(it.q) : sayOne('Try again! You can do it!'); };
+    $('#good').onclick=async e=>{
+      ding(); addStar(); burstAt(e.currentTarget);
+      if(mode==='answer') await praise('Great!', n=>`Great, ${n}!`); else await sayAll(it.a);
+      await wait(300); i++; i<rounds.length ? show() : reward(d,'talk');
+    };
+  }
+  show();
+}
+
+/* Week Review: 8 mixed pick rounds from the week's days */
+async function review(n){
+  const ds = DAYS.filter(d=>d.week===n && !d.soon);
+  nav(`Week ${n} · Review`, ()=>week(n));
+  stage.innerHTML = `<div class="progress">Loading…</div>`;
+  await Promise.all(ds.map(d=>loadAudio(d.id)));
+  if($('#barName').textContent !== `Week ${n} · Review`) return;
+  const pool = shuffle(ds.flatMap(d=>d.items.map(it=>({d,it}))));
+  const rounds = pool.slice(0, Math.min(8, pool.length)); let i=0;
+  const next = ()=>{
+    if(i<rounds.length){ const {d,it}=rounds[i]; i++; pickRound(d, it, `🎯 ${i} / ${rounds.length} · Day ${d.day}`, next); return; }
+    state.trophies[n]=true; save(); addStar(3);
+    stage.innerHTML = `
+      <div class="reward"><div class="medal" aria-hidden="true">🏆</div><h2>Week ${n} Champion!</h2><p class="guide">트로피를 받았어요! 별 3개 보너스 ⭐⭐⭐</p></div>
+      <div class="row"><button class="big go" id="toWeek">⬅️ Week ${n}</button></div>`;
+    fanfare(); burst(innerWidth/2, innerHeight/2, '🏆⭐🎉✨');
+    (async()=>{ await praise('Great job!', nm=>`Great job, ${nm}!`); await wait(200); say('You got a trophy!'); })();
+    $('#toWeek').onclick = ()=>week(n);
+  };
+  next();
+}
+
+/* ---------- phone vs iPad, decided on entry (short screen side < 600px = phone) ---------- */
+function detectDevice(){ const m = Math.min(screen.width||innerWidth, screen.height||innerHeight); return m < 600 ? 'phone' : 'tablet'; }
+function applyDevice(){ const d = (state.device==='phone'||state.device==='tablet') ? state.device : detectDevice(); document.documentElement.dataset.device = d; queueFit(); return d; }
+
+/* ---------- keep sentences on one line: shrink font until it fits, wrap only as a last resort ---------- */
+const FIT_SEL = '.hero h1,.bubble,.answer .txt,.hint,.t,.namebox label';
+function fitAll(){
+  const phone = document.documentElement.dataset.device === 'phone';
+  stage.querySelectorAll(FIT_SEL).forEach(el=>{
+    el.style.fontSize=''; el.style.whiteSpace='';
+    if(!el.clientWidth) return;
+    let s = parseFloat(getComputedStyle(el).fontSize);
+    const min = el.matches('.t') ? 13 : (phone ? 13 : 18);
+    let guard = 80;
+    while(el.scrollWidth > el.clientWidth + 1 && s > min && guard--){ s -= 0.5; el.style.fontSize = s + 'px'; }
+    if(el.scrollWidth > el.clientWidth + 1) el.style.whiteSpace = 'normal';
+  });
+}
+let fitQueued = false;
+function queueFit(){ if(fitQueued) return; fitQueued = true; requestAnimationFrame(()=>{ fitQueued = false; fitAll(); }); }
+new MutationObserver(queueFit).observe(stage, {childList:true, subtree:true, characterData:true});
+addEventListener('resize', queueFit);
+try{ document.fonts && document.fonts.ready.then(queueFit); }catch(e){}
+applyDevice();
+
+$('#homeBtn').onclick = home;
+$('#backBtn').onclick = ()=>{ if(backFn) backFn(); };
+$('#slowBtn').onclick = ()=>{ state.slow=!state.slow; save(); updateBar(); sayOne(state.slow?'Slow':'Normal'); };
+updateBar();
+home();
+</script>
+
+</body>
+</html>
