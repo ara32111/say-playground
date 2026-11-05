@@ -283,10 +283,10 @@ function koRiddle(th){
       <div class="row"><button class="big alt" id="hintBtn">💡 그림 힌트</button></div>`;
     const play = ()=>sayAll(w.m, qWord(th));
     play(); $('#again').onclick = play;
-    let hintT = null;   /* pictures show for 3 s, then back to text only */
+    let hintT = null;   /* pictures show for 1 s, then back to text only */
     $('#hintBtn').onclick = ()=>{
       const ps = stage.querySelectorAll('.hintpic'); ps.forEach(p=>p.hidden=false); clearTimeout(hintT);
-      hintT = setTimeout(()=>ps.forEach(p=>p.hidden=true), 3000);
+      hintT = setTimeout(()=>ps.forEach(p=>p.hidden=true), 1000);
     };
     stage.querySelectorAll('.card').forEach(c=>c.onclick=async ()=>{
       if(locked || c.classList.contains('wrong')) return;
