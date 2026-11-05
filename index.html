@@ -140,6 +140,11 @@ main::before,main::after{content:"";margin:auto}
 .ko-w{font-family:var(--f-ko);color:var(--ink)!important}
 .bubble.wrap{white-space:normal;line-height:1.45;text-align:left}
 .koword{font-family:var(--f-ko);font-size:clamp(44px,9vmin,80px);line-height:1.1;white-space:nowrap;overflow:hidden;max-width:100%}
+.wordcard{background:var(--card);border-radius:32px;box-shadow:var(--shadow);padding:clamp(14px,3vmin,28px) clamp(28px,6vmin,64px);max-width:100%;box-sizing:border-box;border:5px solid var(--butter)}
+.koword.mainw{font-size:clamp(76px,17vmin,150px);font-weight:400;color:var(--berry)}
+.mgrid.three{grid-template-columns:repeat(3,minmax(0,1fr));width:min(560px,100%)}
+:root[data-device="phone"] .koword.mainw{font-size:64px}
+:root[data-device="phone"] .wordcard{padding:10px 22px;border-radius:24px}
 .sylrow{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;max-width:100%}
 .syl{font-family:var(--f-ko);font-size:clamp(44px,9vmin,76px);width:clamp(72px,14vmin,118px);height:clamp(72px,14vmin,118px);display:flex;align-items:center;justify-content:center;background:var(--card);border-radius:22px;box-shadow:var(--shadow);line-height:1}
 .syl.blank{background:rgba(255,253,247,.5);border:4px dashed var(--ink-soft);box-shadow:none;color:var(--ink-soft)}

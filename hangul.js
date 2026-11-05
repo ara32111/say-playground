@@ -52,12 +52,12 @@ function koHome(){
   nav('한글 놀이터', landing);
   const ks = koState(), total = KO.themes.reduce((a,t)=>a+t.words.length,0), got = Object.keys(ks.words).length;
   stage.innerHTML = `
-    <div class="hero"><div class="plates" aria-hidden="true">${KO.themes.map(t=>t.e).join('')}</div><h1>한글 놀이터</h1><p>주제를 골라요</p></div>
+    <div class="hero"><h1>한글 놀이터</h1><p>주제를 골라요</p></div>
     <div class="grid2">
       ${KO.themes.map(t=>`
         <button class="weekbtn" data-t="${t.id}">
           <span class="wem" aria-hidden="true">${t.e}</span>
-          <span style="min-width:0"><span class="t">${esc(t.t)}</span><span class="k">${t.words.slice(0,6).map(w=>w.e).join(' ')}</span></span>
+          <span style="min-width:0"><span class="t">${esc(t.t)}</span><span class="k">낱말 ${t.words.length}개</span></span>
           <span class="meter">${ks.trophies[t.id]?'🏆':'<b>⭐</b>'}${koCount(t)}/${KG.length}</span>
         </button>`).join('')}
       <button class="weekbtn review" id="dogamBtn">
@@ -119,8 +119,8 @@ function koLearn(th){
     const w = list[i]; collect(w);
     stage.innerHTML = `
       <div class="progress">${i+1} / ${list.length}</div>
-      <button id="picBtn" aria-label="다시 듣기">${pic(w.e,'')}</button>
-      ${koWord(w.w,'big')}
+      <button id="picBtn" aria-label="다시 듣기">${pic(w.e,'','md')}</button>
+      <div class="wordcard">${koWord(w.w,'mainw')}</div>
       <div class="bubble wrap ko-s">${esc(w.m)}</div>
       <div class="row"><button class="big alt" id="again">🔊 다시 듣기</button><button class="big go" id="next">${i<list.length-1?'다음 ➜':'끝! 🎉'}</button></div>`;
     const play = ()=>sayAll(w.w, w.m);
@@ -130,15 +130,18 @@ function koLearn(th){
   show();
 }
 
-/* 1. 짝꿍 찾기 — flip cards, match picture with word; sound only after a match */
+/* 1. 짝꿍 찾기 — flip cards, match picture with word; 2 rounds × 3 pairs; sound only after a match */
 function koMemory(th){
   koNav(th,'memory');
-  const words = koRounds(th, 6);
+  const all = koRounds(th, 6), R = 2, per = 3;
+  let round = 0;
+  function show(){
+  const words = all.slice(round*per, round*per+per);
   const cards = shuffle(words.flatMap((w,n)=>[{n,w,type:'pic'},{n,w,type:'word'}]));
   let first=null, lock=false, matched=0;
   stage.innerHTML = `
-    <div class="progress">그림과 낱말 짝을 찾아요!</div>
-    <div class="mgrid">${cards.map((c,k)=>`
+    <div class="progress">라운드 ${round+1} / ${R} · 그림과 낱말 짝을 찾아요!</div>
+    <div class="mgrid three">${cards.map((c,k)=>`
       <button class="mcard" data-k="${k}" aria-label="card">
         <span class="back" aria-hidden="true">🐻</span>
         <span class="front">${c.type==='pic' ? `<span class="em">${c.w.e}</span>` : `<span class="mw ${[...c.w.w].length>=5?'xs':[...c.w.w].length>=4?'s':''}">${esc(c.w.w)}</span>`}</span>
@@ -152,11 +155,17 @@ function koMemory(th){
     if(a.c.n===c.n && a.c.type!==c.type){
       a.el.classList.add('matched'); el.classList.add('matched'); good(el); collect(c.w); matched++;
       lock = true; await say(c.w.w); lock = false;
-      if(matched===words.length){ await wait(500); koReward(th,'memory',words); }
+      if(matched===words.length){
+        await wait(500); round++;
+        if(round<R){ fanfare(); burst(innerWidth/2, innerHeight/2); stage.innerHTML = `<div class="reward"><div class="medal" aria-hidden="true">🃏</div><h2>라운드 ${round} 성공!</h2></div><div class="row"><button class="big go" id="nextR">라운드 ${round+1} ➜</button></div>`; $('#nextR').onclick = show; }
+        else koReward(th,'memory',all);
+      }
     }else{
       lock = true; await wait(900); a.el.classList.remove('open'); el.classList.remove('open'); lock = false;
     }
   });
+  }
+  show();
 }
 
 /* 2. 빈칸 풍선 — one syllable hidden; pop the right balloon (look-alike decoys) */
@@ -270,9 +279,11 @@ function koRiddle(th){
       <div class="progress">${i+1} / ${rounds.length}</div>
       <div class="chef"><div class="face" aria-hidden="true">🐻</div><div class="bubble wrap ko-s">${esc(w.m)}<br><b>${qWord(th)}</b></div><button class="iconbtn" id="again" aria-label="다시 듣기">🔊</button></div>
       <div class="cards three">${opts.map(o=>`
-        <button class="card" data-w="${esc(o.w)}"><span class="tface" aria-hidden="true">${o.e}</span><span class="tw ko-w">${esc(o.w)}</span></button>`).join('')}</div>`;
+        <button class="card wordonly" data-w="${esc(o.w)}"><span class="tface hintpic" aria-hidden="true" hidden>${o.e}</span><span class="tw ko-w">${esc(o.w)}</span></button>`).join('')}</div>
+      <div class="row"><button class="big alt" id="hintBtn">💡 그림 힌트</button></div>`;
     const play = ()=>sayAll(w.m, qWord(th));
     play(); $('#again').onclick = play;
+    $('#hintBtn').onclick = ()=>{ stage.querySelectorAll('.hintpic').forEach(p=>p.hidden=false); $('#hintBtn').disabled=true; $('#hintBtn').style.opacity='.4'; };
     stage.querySelectorAll('.card').forEach(c=>c.onclick=async ()=>{
       if(locked || c.classList.contains('wrong')) return;
       if(c.dataset.w===w.w){ locked=true; c.classList.add('right'); good(c); collect(w); await say(w.w); await wait(450); i++; i<rounds.length ? show() : koReward(th,'riddle',rounds); }
