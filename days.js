@@ -97,8 +97,29 @@ window.BOOK = {
     {"w":"soda","e":"🥫","ko":"탄산음료","show":"🍕","q":"What do you drink with your pizza?","a":"I drink a soda with my pizza.","b":"soda","chunks":["I drink","a soda","with my","pizza."]},
     {"w":"juice","e":"🧃","ko":"주스","show":"🥗","q":"What do you drink with your salad?","a":"I drink juice with my salad.","b":"juice","chunks":["I drink","juice","with my","salad."]}
   ]},
-  {"id":"w4d2","week":4,"day":2,"title":"Sweet Desserts","soon":true,"items":[]},
-  {"id":"w4d3","week":4,"day":3,"title":"Other Desserts","soon":true,"items":[]},
-  {"id":"w4d4","week":4,"day":4,"title":"How's Your Dessert?","soon":true,"items":[]}
+  {"id":"w4d2","week":4,"day":2,"title":"Sweet Desserts","mode":"find","items":[
+    {"w":"cake","e":"🍰","q":"What're you having for dessert?","a":"I'm having cake for dessert.","b":"cake","p":"dessert","chunks":["I'm having","cake","for dessert."]},
+    {"w":"ice cream","e":"🍨","ko":"아이스크림","q":"What're you having for dessert?","a":"I'm having ice cream for dessert.","b":"ice cream","p":"dessert","chunks":["I'm having","ice cream","for dessert."]},
+    {"w":"pudding","e":"🍮","ko":"푸딩","q":"What're you having for dessert?","a":"I'm having pudding for dessert.","b":"pudding","p":"dessert","chunks":["I'm having","pudding","for dessert."]},
+    {"w":"cookie","e":"🍪","q":"What're you having for dessert?","a":"I'm having a cookie for dessert.","b":"cookie","p":"dessert","chunks":["I'm having","a cookie","for dessert."]}
+  ]},
+  {"id":"w4d3","week":4,"day":3,"title":"Other Desserts","mode":"attr",
+   "attrs":{"Sure":{"e":"👍","ko":"좋아요"},"No, thanks":{"e":"🙅","ko":"괜찮아요"}},
+   "items":[
+    {"w":"pie","e":"🥧","ko":"파이","think":"🥧","ans":"Sure","q":"How about pie?","a":"Sure, pie sounds great.","b":"pie","chunks":["Sure,","pie","sounds great."]},
+    {"w":"cupcake","e":"🧁","think":"🧁","ans":"Sure","q":"How about a cupcake?","a":"Sure, a cupcake sounds great.","b":"cupcake","chunks":["Sure,","a cupcake","sounds great."]},
+    {"w":"popcorn","e":"🍿","think":"🍿","ans":"Sure","q":"How about popcorn?","a":"Sure, popcorn sounds great.","b":"popcorn","chunks":["Sure,","popcorn","sounds great."]},
+    {"w":"brownie","e":"🍫","ko":"브라우니","think":"🍿","ans":"No, thanks","q":"How about a brownie?","a":"No, thanks. I'll have popcorn.","b":"popcorn","chunks":["No, thanks.","I'll have","popcorn."]},
+    {"w":"donut","e":"🍩","think":"🧁","ans":"No, thanks","q":"How about a donut?","a":"No, thanks. I'll have a cupcake.","b":"cupcake","chunks":["No, thanks.","I'll have","a cupcake."]}
+  ]},
+  {"id":"w4d4","week":4,"day":4,"title":"How's Your Dessert?","mode":"attr",
+   "attrs":{"chewy":{"e":"🍬","ko":"쫀득해요"},"creamy":{"e":"🥛","ko":"부드러워요"},"fluffy":{"e":"☁️","ko":"폭신해요"},"sticky":{"e":"🍯","ko":"끈적해요"},"crispy":{"e":"💥","ko":"바삭해요"}},
+   "items":[
+    {"w":"cookie","e":"🍪","ans":"chewy","q":"How's your cookie?","a":"My cookie is chewy.","b":"cookie","p":"chewy","chunks":["My","cookie","is","chewy."]},
+    {"w":"ice cream","e":"🍦","ko":"아이스크림","ans":"creamy","q":"How's your ice cream?","a":"My ice cream is creamy.","b":"ice cream","p":"creamy","chunks":["My","ice cream","is","creamy."]},
+    {"w":"cake","e":"🍰","ans":"fluffy","q":"How's your cake?","a":"My cake is fluffy.","b":"cake","p":"fluffy","chunks":["My","cake","is","fluffy."]},
+    {"w":"donut","e":"🍩","ans":"sticky","q":"How's your donut?","a":"My donut is sticky.","b":"donut","p":"sticky","chunks":["My","donut","is","sticky."]},
+    {"w":"popcorn","e":"🍿","ans":"crispy","q":"How's your popcorn?","a":"My popcorn is crispy.","b":"popcorn","p":"crispy","chunks":["My","popcorn","is","crispy."]}
+  ]}
 ]
 };

@@ -64,6 +64,8 @@ main::before,main::after{content:"";margin:auto}
 .pic{display:flex;flex-direction:column;align-items:center;gap:2px}
 .pic .em{font-size:clamp(96px,20vmin,180px);line-height:1;filter:drop-shadow(0 8px 0 rgba(36,48,92,.15))}
 .pic.md .em{font-size:clamp(66px,12vmin,110px)}
+.think{font-size:clamp(40px,8vmin,72px);line-height:1;background:var(--card);border-radius:999px;padding:8px 18px;box-shadow:var(--shadow)}
+:root[data-device="phone"] .think{font-size:34px;padding:6px 12px}
 .ko{font-family:var(--f-ko);font-size:17px;color:var(--ink-soft);background:rgba(255,253,247,.85);border-radius:10px;padding:2px 10px}
 .w-food{color:var(--blue)} .w-taste{color:var(--berry)}
 .big{background:var(--berry);color:#fff;font-family:var(--f-display);font-weight:700;font-size:clamp(22px,3.6vmin,30px);padding:16px 30px;border-radius:22px;box-shadow:0 6px 0 #A82457;min-height:64px}
@@ -231,7 +233,10 @@ function mark(text, it){
   return s.replace(/\u0001(\d+)\u0002/g, (_,i)=>`<span class="${found[i][1]}">${found[i][0]}</span>`);
 }
 function chunkCls(c, it){ const l=c.toLowerCase(); if(it.b && l.includes(it.b.toLowerCase())) return 'w-food'; if(it.p && l.includes(it.p.toLowerCase())) return 'w-taste'; return ''; }
-function pic(e, ko, cls=''){ return `<div class="pic ${cls}"><span class="em" aria-hidden="true">${e}</span>${ko?`<span class="ko">${esc(ko)}</span>`:''}</div>`; }
+function pic(e, ko, cls='', think=''){
+  const p = `<div class="pic ${cls}"><span class="em" aria-hidden="true">${e}</span>${ko?`<span class="ko">${esc(ko)}</span>`:''}</div>`;
+  return think ? `<div class="row">${p}<span class="think" aria-label="wants">💭${think}</span></div>` : p;   /* thought bubble: what the child really wants */
+}
 const qVis = it => it.show || it.e;                 // what the question is about
 const qKo  = it => it.show ? '' : (it.ko||'');
 function ansIcon(day, it){ return day.mode==='attr' ? day.attrs[it.ans].e : (it.e + (it.badge||'')); }
@@ -459,7 +464,7 @@ function learn(d){
     stage.innerHTML = `
       <div class="progress">${i+1} / ${d.items.length}</div>
       <div class="chef"><div class="face" aria-hidden="true">🐻</div><div class="bubble">${mark(it.q,it)}</div></div>
-      <button id="foodBtn" aria-label="Listen again">${pic(qVis(it), qKo(it))}</button>
+      <button id="foodBtn" aria-label="Listen again">${pic(qVis(it), qKo(it), '', it.think)}</button>
       <div id="ansArea"><button class="big" id="revealBtn">Show me! 👀</button></div>
       <div class="guide">엄마 가이드: 그림을 누르면 질문을 다시 들어요. 동그라미를 하나씩 누르며 세 번 따라 말해요.</div>`;
     sayAll(it.q);
@@ -496,7 +501,7 @@ function pickRound(d, it, label, onDone){
     opts = shuffle([it, ...others]).map(x=>({key:x.w, e:x.e, w:x.w, ko:x.ko||''}));
   }
   const correct = d.mode==='attr' ? it.ans : it.w;
-  const visual = d.mode==='attr' ? pic(it.e, it.ko, 'md') : (it.show ? pic(it.show,'','md') : pic('👂','Listen!','md'));
+  const visual = d.mode==='attr' ? pic(it.e, it.ko, 'md', it.think) : (it.show ? pic(it.show,'','md') : pic('👂','Listen!','md'));
   stage.innerHTML = `
     <div class="progress">${label}</div>
     <div class="chef"><div class="face" aria-hidden="true">🐻</div><div class="bubble">${mark(it.q,it)}</div><button class="iconbtn" id="again" aria-label="Listen again">🔊</button></div>
@@ -536,7 +541,7 @@ function build(d){
     stage.innerHTML = `
       <div class="progress">${i+1} / ${rounds.length}</div>
       <div class="chef"><div class="face" aria-hidden="true">🐻</div><div class="bubble">${mark(it.q,it)}</div><button class="iconbtn" id="again" aria-label="Listen again">🔊</button></div>
-      <div class="row">${pic(qVis(it), qKo(it), 'md')}<span class="pic md"><span class="em" aria-hidden="true">${d.mode==='attr'||it.show?ansIcon(d,it):(it.badge||'💬')}</span></span></div>
+      <div class="row">${pic(qVis(it), qKo(it), 'md', it.think)}<span class="pic md"><span class="em" aria-hidden="true">${d.mode==='attr'||it.show?ansIcon(d,it):(it.badge||'💬')}</span></span></div>
       <div class="slots">${words.map((w,n)=>`<div class="slot" id="s${n}"></div>`).join('')}</div>
       <div class="tiles">${order.map(n=>`<button class="tile" data-n="${n}"><span class="${chunkCls(words[n],it)}">${esc(words[n])}</span></button>`).join('')}</div>
       <div class="guide">엄마 가이드: 문장 순서대로 블록을 눌러요. 막히면 첫 블록을 같이 찾아 주세요.</div>`;
@@ -568,7 +573,7 @@ function talk(d){
       stage.innerHTML = `
         <div class="progress">${i+1} / ${rounds.length}</div>
         <div class="chef"><div class="face" aria-hidden="true">🐻</div><div class="bubble">${mark(it.q,it)}</div><button class="iconbtn" id="again" aria-label="Listen again">🔊</button></div>
-        ${pic(d.mode==='find' && !it.show ? it.e : qVis(it), d.mode==='find' && !it.show ? (it.ko||'') : qKo(it), 'md')}
+        ${pic(d.mode==='find' && !it.show ? it.e : qVis(it), d.mode==='find' && !it.show ? (it.ko||'') : qKo(it), 'md', it.think)}
         <div class="bubble me">🎤 Your turn! Say it!</div>
         <div class="hint" id="hint"></div>
         <div class="row"><button class="big alt" id="help">👂 Help</button></div>
