@@ -3,21 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Speaking Practice</title>
-<meta name="description" content="Listen, pick, build and talk! A yummy English speaking game.">
+<title>Say Playground</title>
+<meta name="description" content="English and Korean play for kids: speak, read, and write!">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Speaking Practice 🐻🍳">
-<meta property="og:description" content="Listen · Pick · Build · Talk! 영어 말하기 놀이">
-<meta property="og:image" content="https://ara32111.github.io/speaking-practice/og.png">
+<meta property="og:title" content="Say Playground 🐻 English · 한글 놀이터">
+<meta property="og:description" content="영어 말하기 + 한글 읽기·쓰기 놀이">
+<meta property="og:image" content="https://ara32111.github.io/say-playground/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:url" content="https://ara32111.github.io/speaking-practice/">
+<meta property="og:url" content="https://ara32111.github.io/say-playground/">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Speaking">
+<meta name="apple-mobile-web-app-title" content="Say Playground">
 <meta name="theme-color" content="#CDEDE4">
 <style>
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}
@@ -126,6 +126,78 @@ main::before,main::after{content:"";margin:auto}
 @keyframes shake{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
 @keyframes pop{0%{transform:scale(.3)}70%{transform:scale(1.12)}100%{transform:scale(1)}}
 @keyframes fly{from{transform:translate(0,0) scale(.6);opacity:1}to{transform:translate(var(--dx),var(--dy)) scale(1.2);opacity:0}}
+/* ===== language doors ===== */
+.doors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;width:min(760px,100%)}
+.door{border-radius:32px;padding:26px 16px;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:var(--shadow);min-width:0}
+.door.en{background:#FFE7A8}.door.ko{background:#FFD3E2}
+.door:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(36,48,92,.18)}
+.door .de{font-size:clamp(64px,12vmin,104px);line-height:1}
+.door .dt{font-family:var(--f-display);font-weight:700;font-size:clamp(30px,5vmin,44px);white-space:nowrap;overflow:hidden;max-width:100%}
+.door.ko .dt{font-family:var(--f-ko)}
+.door .meter{margin:4px 0 0}
+/* ===== 한글 놀이터 ===== */
+.ko-s{font-family:var(--f-ko)}
+.ko-w{font-family:var(--f-ko);color:var(--ink)!important}
+.bubble.wrap{white-space:normal;line-height:1.45;text-align:left}
+.koword{font-family:var(--f-ko);font-size:clamp(44px,9vmin,80px);line-height:1.1;white-space:nowrap;overflow:hidden;max-width:100%}
+.sylrow{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;max-width:100%}
+.syl{font-family:var(--f-ko);font-size:clamp(44px,9vmin,76px);width:clamp(72px,14vmin,118px);height:clamp(72px,14vmin,118px);display:flex;align-items:center;justify-content:center;background:var(--card);border-radius:22px;box-shadow:var(--shadow);line-height:1}
+.syl.blank{background:rgba(255,253,247,.5);border:4px dashed var(--ink-soft);box-shadow:none;color:var(--ink-soft)}
+.syl.got{background:#DDF6E7;outline:5px solid var(--good)}
+.syl.tap:active{transform:translateY(4px)}
+.balloons{display:flex;gap:clamp(14px,4vw,40px);justify-content:center;flex-wrap:wrap;padding-top:10px}
+.balloon{position:relative;width:clamp(96px,17vmin,140px);height:clamp(118px,21vmin,172px);border-radius:50% 50% 48% 48%/55% 55% 45% 45%;background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.6) 0 12%,transparent 13%),var(--bc);box-shadow:inset -10px -14px 0 rgba(0,0,0,.08);animation:bob 2.6s ease-in-out infinite;animation-delay:var(--d);transition:transform .35s,opacity .35s}
+.balloon::after{content:"";position:absolute;left:50%;bottom:-34px;width:2px;height:34px;background:rgba(36,48,92,.35)}
+.balloon span{font-family:var(--f-ko);font-size:clamp(40px,8vmin,64px);color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.18);position:relative;top:-4px}
+.balloon.gone{opacity:0;transform:translateY(-160px) scale(.7);pointer-events:none}
+.balloon.pop{animation:popb .35s forwards}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes popb{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(0);opacity:0}}
+.mgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;width:min(720px,100%)}
+.mcard{aspect-ratio:1/1;border-radius:20px;box-shadow:var(--shadow);background:var(--blue);position:relative;overflow:hidden;max-width:100%}
+.mcard .back{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(34px,7vmin,56px)}
+.mcard .front{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:var(--card);padding:4px}
+.mcard.open .front{display:flex}.mcard.open .back{display:none}
+.mcard.matched .front{background:#DDF6E7}
+.mcard .em{font-size:clamp(44px,9vmin,72px);line-height:1}
+.mw{font-family:var(--f-ko);font-size:clamp(24px,4.6vmin,38px);white-space:nowrap;color:var(--ink)}
+.mw.s{font-size:clamp(20px,3.8vmin,30px)}.mw.xs{font-size:clamp(16px,3vmin,24px)}
+.cards.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card.wordonly{min-height:96px}
+.card.wordonly .tw{font-size:clamp(24px,4.6vmin,36px)}
+.blank-w{display:inline-block;min-width:3.2em;border-bottom:4px solid var(--berry);margin:0 4px;text-align:center;color:var(--blue)}
+.blank-w.got{border-color:var(--good)}
+.tracebox{position:relative;width:min(720px,100%);height:clamp(170px,34vh,280px);background:var(--card);border-radius:26px;box-shadow:var(--shadow);background-image:linear-gradient(transparent calc(50% - 1px),rgba(90,101,144,.15) 50%,transparent calc(50% + 1px))}
+.tracebox canvas{position:absolute;inset:0;width:100%;height:100%}
+#cu{touch-action:none;cursor:crosshair}
+.pen{width:44px;height:44px;border-radius:50%;background:var(--pc);box-shadow:var(--shadow);border:4px solid var(--card)}
+.pen.on{outline:4px solid var(--ink);outline-offset:2px}
+.dg-sec{width:min(760px,100%);display:flex;flex-direction:column;gap:8px}
+.dg-t{font-family:var(--f-ko);font-size:20px;text-align:left}
+.dgrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.dcard{background:var(--card);border-radius:16px;box-shadow:var(--shadow);aspect-ratio:1/1.1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:0;overflow:hidden;padding:2px}
+.dcard .em{font-size:clamp(28px,5vmin,40px);line-height:1}
+.dcard .mw{font-size:15px}.dcard .mw.s{font-size:13px}.dcard .mw.xs{font-size:11px}
+.dcard.locked{opacity:.4;box-shadow:none}
+:root[data-device="phone"] .doors{grid-template-columns:1fr;gap:12px}
+:root[data-device="phone"] .door{padding:18px 12px}
+:root[data-device="phone"] .door .de{font-size:58px}
+:root[data-device="phone"] .door .dt{font-size:28px}
+:root[data-device="phone"] .koword{font-size:40px}
+:root[data-device="phone"] .syl{font-size:36px;width:64px;height:64px;border-radius:16px}
+:root[data-device="phone"] .sylrow{gap:8px}
+:root[data-device="phone"] .balloon{width:86px;height:106px}
+:root[data-device="phone"] .balloon span{font-size:34px}
+:root[data-device="phone"] .mgrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+:root[data-device="phone"] .mcard .em{font-size:40px}
+:root[data-device="phone"] .mw{font-size:20px}:root[data-device="phone"] .mw.s{font-size:17px}:root[data-device="phone"] .mw.xs{font-size:14px}
+:root[data-device="phone"] .cards.three{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+:root[data-device="phone"] .card.wordonly .tw{font-size:19px}
+:root[data-device="phone"] .tracebox{height:170px}
+:root[data-device="phone"] .pen{width:36px;height:36px}
+:root[data-device="phone"] .dgrid{grid-template-columns:repeat(4,minmax(0,1fr))}
+:root[data-device="phone"] .bubble.wrap{font-size:17px}
+
 /* one-line text: script shrinks these to fit their width before letting them wrap */
 .hero{width:100%}
 .hero h1,.bubble,.answer .txt,.hint,.t,.namebox label{white-space:nowrap;overflow:hidden}
@@ -184,7 +256,7 @@ main::before,main::after{content:"";margin:auto}
   <header class="bar">
     <button class="iconbtn" id="homeBtn" aria-label="Home">🏠</button>
     <button class="iconbtn" id="backBtn" aria-label="Back" hidden>⬅️</button>
-    <div class="name" id="barName">Yummy Kitchen</div>
+    <div class="name" id="barName">Say Playground</div>
     <button class="iconbtn" id="slowBtn" aria-label="Slow voice" aria-pressed="false" title="천천히 말하기">🐢</button>
     <div class="pill" id="starPill" aria-label="Stars">⭐ 0</div>
   </header>
@@ -192,7 +264,9 @@ main::before,main::after{content:"";margin:auto}
 </div>
 
 <script src="days.js"></script>
+<script src="ko-data.js"></script>
 <script src="audio/shared.js"></script>
+<script src="audio/ko-shared.js"></script>
 <script>
 const BOOKD = window.BOOK || {weeks:[],days:[]};
 const DAYS = BOOKD.days;
@@ -212,8 +286,13 @@ state.done = state.done || {}; state.trophies = state.trophies || {};
 function save(){ try{ localStorage.setItem('tasteKitchen', JSON.stringify(state)); }catch(e){} }
 const $ = s => document.querySelector(s);
 const stage = $('#stage');
-function updateBar(){ $('#starPill').textContent = '⭐ ' + state.stars; $('#slowBtn').setAttribute('aria-pressed', state.slow); }
-function addStar(n=1){ state.stars += n; save(); updateBar(); }
+let curLang = '';   // '' = language doors, 'en' = English, 'ko' = 한글
+function koState(){ if(!state.ko) state.ko = {stars:0, done:{}, words:{}, trophies:{}}; return state.ko; }
+function updateBar(){
+  const v = curLang==='ko' ? koState().stars : curLang==='en' ? state.stars : state.stars + koState().stars;
+  $('#starPill').textContent = '⭐ ' + v; $('#slowBtn').setAttribute('aria-pressed', state.slow);
+}
+function addStar(n=1){ if(curLang==='ko') koState().stars += n; else state.stars += n; save(); updateBar(); }
 const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
 const wait = ms => new Promise(r=>setTimeout(r,ms));
 const esc = s => String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -347,14 +426,14 @@ function nav(title, back){
 }
 
 function nameScreen(isNewFriend){
-  nav('Yummy Kitchen');
+  curLang=''; nav('Say Playground');
   stage.innerHTML = `
-    <div class="hero"><div class="plates" aria-hidden="true">🍌🥕🍳🥤🍩</div><h1>Welcome to Yummy Kitchen!</h1></div>
+    <div class="hero"><div class="plates" aria-hidden="true">🐻🔤🍌🦔🎈</div><h1>Welcome to Say Playground!</h1></div>
     <form class="namebox" id="nameForm">
       <label for="kidName">What's your name?</label>
       <input id="kidName" maxlength="12" autocomplete="off" autocapitalize="words" placeholder="Daisy" value="${isNewFriend?'':esc(state.name||'Daisy')}">
       <p class="note">영어 이름으로 쓰면 곰 셰프가 이름을 불러줘요. (예: Daisy, Minjun)<br>한글로 써도 화면에는 잘 나와요.</p>
-      <button class="big go" type="submit">Let's cook! 🍳</button>
+      <button class="big go" type="submit">Let's play! 🎈</button>
     </form>
     ${isNewFriend?'<p class="small">새 친구로 시작하면 이 기기의 별과 스티커가 처음부터 다시 시작돼요.</p>':''}`;
   const input = $('#kidName');
@@ -362,15 +441,41 @@ function nameScreen(isNewFriend){
     e.preventDefault();
     const v = input.value.trim().slice(0,12);
     if(!v){ shake(input); boop(); input.focus(); return; }
-    if(isNewFriend){ state.stars=0; state.done={}; state.trophies={}; }
-    state.name = v; save(); updateBar(); ding(); home();
+    if(isNewFriend){ state.stars=0; state.done={}; state.trophies={}; state.ko=null; }
+    state.name = v; save(); updateBar(); ding(); landing();
     praise("Hi! Let's cook!", n=>`Hi, ${n}! Let's cook!`);
   };
 }
 
+/* language doors: English (Circle Time 4) / 한글 놀이터 */
+function landing(){
+  if(!state.name) return nameScreen(false);
+  curLang=''; updateBar(); nav('Say Playground');
+  stage.innerHTML = `
+    <div class="hero"><h1>Hi, <span id="heroName"></span>!<br>오늘은 뭐 하고 놀까?</h1></div>
+    <div class="doors">
+      <button class="door en" id="goEn"><span class="de" aria-hidden="true">🍔</span><span class="dt">English</span><span class="k">Circle Time 4 · 영어 말하기</span><span class="meter">⭐ ${state.stars}</span></button>
+      <button class="door ko" id="goKo"><span class="de" aria-hidden="true">🔤</span><span class="dt">한글</span><span class="k">낱말 읽고 쓰기 놀이</span><span class="meter">⭐ ${koState().stars}</span></button>
+    </div>
+    <div class="row">
+      <button class="small" id="soundTest">🔊 소리 테스트</button>
+      <button class="small" id="devBtn">${document.documentElement.dataset.device==='phone'?'📱 폰 화면 → 아이패드로 바꾸기':'📲 아이패드 화면 → 폰으로 바꾸기'}</button>
+      <button class="small" id="rename">✏️ 이름 바꾸기</button>
+      <button class="small" id="newFriend">👤 다른 친구로 시작하기</button>
+    </div>`;
+  $('#heroName').textContent = state.name;
+  $('#goEn').onclick = home;
+  $('#goKo').onclick = ()=>{ if(typeof koHome==='function') koHome(); };
+  $('#soundTest').onclick = ()=>{ ding(); sayOne('Hello!'); };
+  $('#rename').onclick = ()=>nameScreen(false);
+  $('#devBtn').onclick = ()=>{ state.device = document.documentElement.dataset.device==='phone' ? 'tablet' : 'phone'; save(); applyDevice(); landing(); };
+  $('#newFriend').onclick = ()=>nameScreen(true);
+}
+
 function home(){
   if(!state.name) return nameScreen(false);
-  nav(`${state.name}'s Kitchen`);
+  curLang='en'; updateBar();
+  nav(`English · Circle Time 4`, landing);
   stage.innerHTML = `
     <div class="hero"><h1>Hi, <span id="heroName"></span>!<br>What would you like to eat?</h1><p>Circle Time 4 · 주차를 골라요</p></div>
     <div class="grid2">
@@ -382,19 +487,9 @@ function home(){
           <span style="min-width:0"><span class="lbl-s">WEEK ${w.n}</span><span class="t">${esc(w.title)}</span></span>
           <span class="meter">${state.trophies[w.n]?'🏆':'<b>⭐</b>'}${got}/${all}</span>
         </button>`;}).join('')}
-    </div>
-    <div class="row">
-      <button class="small" id="soundTest">🔊 소리 테스트</button>
-      <button class="small" id="devBtn">${document.documentElement.dataset.device==='phone'?'📱 폰 화면 → 아이패드로 바꾸기':'📲 아이패드 화면 → 폰으로 바꾸기'}</button>
-      <button class="small" id="rename">✏️ 이름 바꾸기</button>
-      <button class="small" id="newFriend">👤 다른 친구로 시작하기</button>
     </div>`;
   $('#heroName').textContent = state.name;
   stage.querySelectorAll('.weekbtn').forEach(b=>b.onclick=()=>week(+b.dataset.w));
-  $('#soundTest').onclick = ()=>{ ding(); sayOne('Hello!'); };
-  $('#rename').onclick = ()=>nameScreen(false);
-  $('#devBtn').onclick = ()=>{ state.device = document.documentElement.dataset.device==='phone' ? 'tablet' : 'phone'; save(); applyDevice(); home(); };
-  $('#newFriend').onclick = ()=>nameScreen(true);
 }
 
 function week(n){
@@ -630,7 +725,7 @@ function detectDevice(){ const m = Math.min(screen.width||innerWidth, screen.hei
 function applyDevice(){ const d = (state.device==='phone'||state.device==='tablet') ? state.device : detectDevice(); document.documentElement.dataset.device = d; queueFit(); return d; }
 
 /* ---------- keep sentences on one line: shrink font until it fits, wrap only as a last resort ---------- */
-const FIT_SEL = '.hero h1,.bubble,.answer .txt,.hint,.t,.namebox label';
+const FIT_SEL = '.hero h1,.bubble:not(.wrap),.answer .txt,.hint,.t,.namebox label,.koword,.dt';
 function fitAll(){
   const phone = document.documentElement.dataset.device === 'phone';
   stage.querySelectorAll(FIT_SEL).forEach(el=>{
@@ -650,12 +745,13 @@ addEventListener('resize', queueFit);
 try{ document.fonts && document.fonts.ready.then(queueFit); }catch(e){}
 applyDevice();
 
-$('#homeBtn').onclick = home;
+$('#homeBtn').onclick = landing;
 $('#backBtn').onclick = ()=>{ if(backFn) backFn(); };
 $('#slowBtn').onclick = ()=>{ state.slow=!state.slow; save(); updateBar(); sayOne(state.slow?'Slow':'Normal'); };
 updateBar();
-home();
+landing();
 </script>
+<script src="hangul.js"></script>
 
 </body>
 </html>
