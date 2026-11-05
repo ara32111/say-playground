@@ -283,7 +283,11 @@ function koRiddle(th){
       <div class="row"><button class="big alt" id="hintBtn">💡 그림 힌트</button></div>`;
     const play = ()=>sayAll(w.m, qWord(th));
     play(); $('#again').onclick = play;
-    $('#hintBtn').onclick = ()=>{ stage.querySelectorAll('.hintpic').forEach(p=>p.hidden=false); $('#hintBtn').disabled=true; $('#hintBtn').style.opacity='.4'; };
+    let hintT = null;   /* pictures show for 3 s, then back to text only */
+    $('#hintBtn').onclick = ()=>{
+      const ps = stage.querySelectorAll('.hintpic'); ps.forEach(p=>p.hidden=false); clearTimeout(hintT);
+      hintT = setTimeout(()=>ps.forEach(p=>p.hidden=true), 3000);
+    };
     stage.querySelectorAll('.card').forEach(c=>c.onclick=async ()=>{
       if(locked || c.classList.contains('wrong')) return;
       if(c.dataset.w===w.w){ locked=true; c.classList.add('right'); good(c); collect(w); await say(w.w); await wait(450); i++; i<rounds.length ? show() : koReward(th,'riddle',rounds); }
@@ -307,7 +311,7 @@ function koSentence(th){
       <div class="progress">${i+1} / ${rounds.length}</div>
       <div class="chef"><div class="face" aria-hidden="true">🐻</div><div class="bubble wrap ko-s sent">${sent}</div><button class="iconbtn" id="again" aria-label="다시 듣기">🔊</button></div>
       <div class="cards three">${opts.map(o=>`<button class="card wordonly" data-w="${esc(o.w)}"><span class="tw ko-w">${esc(o.w)}</span></button>`).join('')}</div>`;
-    const play = ()=>sayAll(w.q);
+    const play = ()=>sayAll(w.x);   /* read the whole sentence incl. the answer word; child finds that word */
     play(); $('#again').onclick = play;
     stage.querySelectorAll('.card').forEach(c=>c.onclick=async ()=>{
       if(locked || c.classList.contains('wrong')) return;
