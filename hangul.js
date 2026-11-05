@@ -178,10 +178,12 @@ function koBalloon(th){
     let locked=false;
     stage.innerHTML = `
       <div class="progress">${i+1} / ${rounds.length}</div>
-      ${pic(w.e,'','md')}
+      <div class="row">${pic(w.e,'','md')}<button class="iconbtn" id="again" aria-label="다시 듣기">🔊</button></div>
       <div class="sylrow">${syl.map((s,k)=>k===bi?`<span class="syl blank" id="bl">?</span>`:`<span class="syl">${esc(s)}</span>`).join('')}</div>
       <div class="balloons">${opts.map((o,k)=>`
         <button class="balloon" data-o="${esc(o)}" style="--bc:${cols[k]};--d:${k*0.4}s"><span>${esc(o)}</span></button>`).join('')}</div>`;
+    const play = ()=>sayOne(w.w);   /* say the word once so the child knows what to fill */
+    play(); $('#again').onclick = play;
     stage.querySelectorAll('.balloon').forEach(b=>b.onclick=async ()=>{
       if(locked || b.classList.contains('gone')) return;
       if(b.dataset.o===ans){
