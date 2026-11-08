@@ -7,7 +7,7 @@
 <meta name="description" content="English and Korean play for kids: speak, read, and write!">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Say Playground 🐻 English · 한글 놀이터">
-<meta property="og:description" content="영어 말하기 + 한글 읽기·쓰기 놀이">
+<meta property="og:description" content="영어 · 한글 · 수학 · 한자 놀이">
 <meta property="og:image" content="https://ara32111.github.io/say-playground/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -30,7 +30,7 @@ img{max-width:100%}
 
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Gowun+Dodum&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Gowun+Dodum&family=Noto+Serif+KR:wght@700&display=swap">
 <style>
 /* Layout: one-screen kitchen-tile game board; header bar + centered play area, big touch targets for iPad */
 :root{
@@ -323,6 +323,48 @@ main::before,main::after{content:"";margin:auto}
 :root[data-device="phone"] .namebox{padding:18px}
 :root[data-device="phone"] .namebox label{font-size:26px}
 :root[data-device="phone"] .namebox input{font-size:26px}
+/* ===== 한자 놀이터 ===== */
+.hjc{font-family:"Noto Serif KR","Apple SD Gothic Neo",serif;font-weight:700}
+.doors.four{grid-template-columns:repeat(4,minmax(0,1fr));width:min(1040px,100%)}
+.door.hj{background:#FFD9C7}.door.hj .dt{font-family:var(--f-ko)}
+.door .de.hjc{color:#C0392B;font-size:clamp(56px,10vmin,90px)}
+.hjrow{display:block;font-family:"Noto Serif KR",serif;font-weight:700;font-size:20px;color:var(--ink);letter-spacing:2px;margin-top:4px}
+.hjrow.hjbig{font-size:clamp(34px,6vmin,52px);color:#C0392B;letter-spacing:6px}
+.weekbtn.soon{opacity:.55;box-shadow:none;background:rgba(255,253,247,.6);cursor:default}
+.morphbox{position:relative;width:clamp(170px,32vmin,280px);height:clamp(170px,32vmin,280px);background:var(--card);border-radius:36px;box-shadow:var(--shadow);border:5px solid var(--butter)}
+.morphbox>span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;line-height:1;transition:opacity .7s,transform .7s}
+.morphbox .mpic{font-size:clamp(100px,19vmin,170px)}
+.morphbox .mchar{font-size:clamp(120px,24vmin,210px);color:var(--ink);opacity:0;transform:scale(.4) rotate(-12deg)}
+.morphbox.to .mpic{opacity:0;transform:scale(1.6)}
+.morphbox.to .mchar{opacity:1;transform:none}
+.hunum{font-family:var(--f-ko);font-size:clamp(34px,6vmin,54px);color:var(--berry);background:var(--card);border-radius:20px;padding:4px 22px;box-shadow:var(--shadow)}
+.hunum.sm{font-size:clamp(24px,4vmin,34px);padding:4px 16px}
+.cards.hjcards .card,.cards.three .card .cardhj{min-height:110px}
+.cardhj{font-size:clamp(54px,10vmin,88px);line-height:1;color:var(--ink)}
+.mcard .mhj{font-size:clamp(46px,9vmin,76px);color:var(--ink)}
+.mainhj{font-size:clamp(110px,22vmin,190px);line-height:1;color:var(--ink);display:block}
+.syl.hjmark{outline:5px solid var(--berry);outline-offset:-2px;background:#FFE8EF}
+.syl.hjmark.got{background:#DDF6E7;outline-color:var(--good)}
+.tracebox.hj{background-image:none;height:clamp(240px,42vh,360px);width:min(420px,100%)}
+.dcard .dhj{font-size:clamp(34px,6vmin,48px);line-height:1;color:var(--ink)}
+.hjgrid{grid-template-columns:repeat(5,minmax(0,1fr))}
+:root[data-device="phone"] .doors.four{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+:root[data-device="phone"] .doors.four .door{padding:14px 8px}
+:root[data-device="phone"] .doors.four .door .de{font-size:46px}
+:root[data-device="phone"] .doors.four .door .dt{font-size:24px}
+:root[data-device="phone"] .doors.four .door .k{font-size:12px}
+:root[data-device="phone"] .morphbox{width:180px;height:180px;border-radius:28px}
+:root[data-device="phone"] .morphbox .mpic{font-size:100px}
+:root[data-device="phone"] .morphbox .mchar{font-size:130px}
+:root[data-device="phone"] .hunum{font-size:32px}
+:root[data-device="phone"] .hunum.sm{font-size:22px}
+:root[data-device="phone"] .cardhj{font-size:54px}
+:root[data-device="phone"] .mcard .mhj{font-size:44px}
+:root[data-device="phone"] .mainhj{font-size:110px}
+:root[data-device="phone"] .tracebox.hj{height:min(340px,44vh);width:100%}
+:root[data-device="phone"] .hjgrid{grid-template-columns:repeat(5,minmax(0,1fr))}
+:root[data-device="phone"] .dcard .dhj{font-size:30px}
+:root[data-device="phone"] .hjrow.hjbig{font-size:30px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -363,12 +405,13 @@ const stage = $('#stage');
 let curLang = '';   // '' = language doors, 'en' = English, 'ko' = 한글
 function koState(){ if(!state.ko) state.ko = {stars:0, done:{}, words:{}, trophies:{}}; return state.ko; }
 function maState(){ if(!state.ma) state.ma = {stars:0, done:{}, trophy:false}; return state.ma; }
+function hjState(){ if(!state.hj) state.hj = {stars:0, done:{}, chars:{}, trophies:{}}; return state.hj; }
 function phState(){ if(!state.ph) state.ph = {stars:0, done:{}, trophies:{}}; return state.ph; }
 function updateBar(){
-  const v = curLang==='ko' ? koState().stars : curLang==='ph' ? phState().stars : curLang==='ma' ? maState().stars : curLang==='en' ? state.stars : state.stars + koState().stars + phState().stars + maState().stars;
+  const v = curLang==='ko' ? koState().stars : curLang==='ph' ? phState().stars : curLang==='ma' ? maState().stars : curLang==='hj' ? hjState().stars : curLang==='en' ? state.stars : state.stars + koState().stars + phState().stars + maState().stars + hjState().stars;
   $('#starPill').textContent = '⭐ ' + v; $('#slowBtn').setAttribute('aria-pressed', state.slow);
 }
-function addStar(n=1){ if(curLang==='ko') koState().stars += n; else if(curLang==='ph') phState().stars += n; else if(curLang==='ma') maState().stars += n; else state.stars += n; save(); updateBar(); }
+function addStar(n=1){ if(curLang==='ko') koState().stars += n; else if(curLang==='ph') phState().stars += n; else if(curLang==='ma') maState().stars += n; else if(curLang==='hj') hjState().stars += n; else state.stars += n; save(); updateBar(); }
 const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
 const wait = ms => new Promise(r=>setTimeout(r,ms));
 const esc = s => String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -517,7 +560,7 @@ function nameScreen(isNewFriend){
     e.preventDefault();
     const v = input.value.trim().slice(0,12);
     if(!v){ shake(input); boop(); input.focus(); return; }
-    if(isNewFriend){ state.stars=0; state.done={}; state.trophies={}; state.ko=null; state.ph=null; state.ma=null; }
+    if(isNewFriend){ state.stars=0; state.done={}; state.trophies={}; state.ko=null; state.ph=null; state.ma=null; state.hj=null; }
     state.name = v; save(); updateBar(); ding(); landing();
     praise("Hi! Let's cook!", n=>`Hi, ${n}! Let's cook!`);
   };
@@ -529,10 +572,11 @@ function landing(){
   curLang=''; updateBar(); nav('Say Playground');
   stage.innerHTML = `
     <div class="hero"><h1>Hi, <span id="heroName"></span>!<br>오늘은 뭐 하고 놀까?</h1></div>
-    <div class="doors three">
+    <div class="doors four">
       <button class="door en" id="goEn"><span class="de" aria-hidden="true">🍔</span><span class="dt">English</span><span class="k">파닉스 · 말하기</span><span class="meter">⭐ ${state.stars + phState().stars}</span></button>
       <button class="door ko" id="goKo"><span class="de" aria-hidden="true">🔤</span><span class="dt">한글</span><span class="k">낱말 읽고 쓰기 놀이</span><span class="meter">⭐ ${koState().stars}</span></button>
       <button class="door ma" id="goMa"><span class="de" aria-hidden="true">🔢</span><span class="dt">수학</span><span class="k">모으기 · 가르기 · 더하기 · 빼기</span><span class="meter">⭐ ${maState().stars}</span></button>
+      <button class="door hj" id="goHj"><span class="de hjc" aria-hidden="true">字</span><span class="dt">한자</span><span class="k">그림으로 배우는 한자</span><span class="meter">⭐ ${hjState().stars}</span></button>
     </div>
     <div class="row">
       <button class="small" id="soundTest">🔊 소리 테스트</button>
@@ -544,6 +588,7 @@ function landing(){
   $('#goEn').onclick = enHome;
   $('#goKo').onclick = ()=>{ if(typeof koHome==='function') koHome(); };
   $('#goMa').onclick = ()=>{ if(typeof maHome==='function') maHome(); };
+  $('#goHj').onclick = ()=>{ if(typeof hjHome==='function') hjHome(); };
   $('#soundTest').onclick = ()=>{ ding(); sayOne('Hello!'); };
   $('#rename').onclick = ()=>nameScreen(false);
   $('#devBtn').onclick = ()=>{ state.device = document.documentElement.dataset.device==='phone' ? 'tablet' : 'phone'; save(); applyDevice(); landing(); };
@@ -847,6 +892,8 @@ landing();
 <script src="ph-data.js?v=16"></script>
 <script src="phonics.js?v=16"></script>
 <script src="math.js?v=16"></script>
+<script src="hj-data.js?v=16"></script>
+<script src="hanja.js?v=16"></script>
 
 </body>
 </html>
