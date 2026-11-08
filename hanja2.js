@@ -38,24 +38,26 @@ function hjEcard(u){
   show();
 }
 
-/* 2. 음 맞히기 — first half shows the 훈 as a hint ("하늘 ?"), second half the character only.
-   A character answered wrong comes back once more at the end. */
+/* 2. 음 맞히기 — the character only; options are full 훈음 ("넓을 홍").
+   💡 힌트 shows the 훈 ("넓을") under the character. A character answered wrong comes back once more at the end. */
 function hjEum(u){
-  hjNav(u,'eum'); const Q = shuffle(u.chars), half = Math.ceil(Q.length/2), again = new Set(); let i=0;
+  hjNav(u,'eum'); const Q = shuffle(u.chars), again = new Set(); let i=0;
   function show(){
-    const ch = Q[i], hint = i < half; let locked=false, missed=false;
+    const ch = Q[i]; let locked=false, missed=false;
     const opts = shuffle([ch, ...hjOtherEum(ch, u.chars, 3)]);
     stage.innerHTML = `
-      <div class="progress">${i+1} / ${Q.length}${hint?' · 힌트 있음':' · 한자만 보고!'}</div>
+      <div class="progress">${i+1} / ${Q.length}</div>
       <div class="eumcard"><span class="hjc ehj">${ch.c}</span>
-        <span class="eumline">${hint?`<span class="hun">${esc(hjHun(ch))}</span>`:''}<span class="eum q" id="ans">?</span></span></div>
-      <div class="cards">${opts.map(o=>`<button class="card wordonly" data-c="${o.c}"><span class="tw ko-w eumopt">${esc(hjYs(o))}</span></button>`).join('')}</div>
+        <span class="eumline"><span class="hun" id="hun" hidden>${esc(hjHun(ch))}</span><span class="eum q" id="ans">?</span></span></div>
+      <button class="big alt" id="hintBtn">💡 힌트</button>
+      <div class="cards">${opts.map(o=>`<button class="card wordonly" data-c="${o.c}"><span class="tw ko-w hunopt">${esc(o.h)}</span></button>`).join('')}</div>
       <div class="hint ko-s" id="hint"></div>`;
+    $('#hintBtn').onclick = ()=>{ $('#hun').hidden = false; $('#hintBtn').disabled = true; };
     stage.querySelectorAll('.card').forEach(c=>c.onclick=async ()=>{
       if(locked || c.classList.contains('wrong')) return;
       if(c.dataset.c===ch.c){
         locked=true; c.classList.add('right'); good(c); hjCollect(ch);
-        const a=$('#ans'); a.textContent=ch.y; a.classList.remove('q');
+        const a=$('#ans'); a.textContent=ch.y; a.classList.remove('q'); $('#hun').hidden=false; $('#hintBtn').disabled=true;
         $('#hint').textContent = ch.h;
         await say(ch.h); await wait(450); i++; i<Q.length ? show() : hjReward(u,'eum');
       }else{
