@@ -10,8 +10,18 @@ const HGS = [
   {id:'trace',  t:'따라 쓰기',      k:'손가락으로 한자 따라 쓰기',     e:'✏️'},
   {id:'word',   t:'낱말 속 한자',    k:'화요일의 "화"는 어떤 한자?',    e:'🔍'}
 ];
+const HGS2 = [
+  {id:'ecard',  t:'음 카드',     k:'한자를 보고 음을 크게!',          e:'📜'},
+  {id:'eum',    t:'음 맞히기',    k:'한자 보고 소리 고르기',           e:'🔤'},
+  {id:'hunt',   t:'낱말 사냥',    k:'"천" 소리가 든 낱말 찾기',        e:'🎈'},
+  {id:'friend', t:'진짜 친구',    k:'같은 소리, 다른 한자 구별',        e:'🕵️'},
+  {id:'verse',  t:'구절 읽기',    k:'천지현황 순서대로 읽기',           e:'🎋'},
+  {id:'flash',  t:'번개 읽기',    k:'배운 한자 빨리 읽기',             e:'⚡'}
+];
+const hjLevelOf = u => HJ.levels.find(l=>l.units.includes(u));
+const hjGames = u => hjLevelOf(u).id==='L2' ? HGS2 : HGS;
 const hjDone = (u,g) => !!hjState().done[u.id+':'+g];
-const hjCount = u => HGS.filter(g=>hjDone(u,g.id)).length;
+const hjCount = u => hjGames(u).filter(g=>hjDone(u,g.id)).length;
 function hjCollect(ch){ hjState().chars[ch.c] = true; save(); }
 const hjChar = (c, cls='') => `<span class="hjc ${cls}">${esc(c)}</span>`;
 
@@ -48,38 +58,37 @@ function hjLevel(id){
       ${l.units.map((u,i)=>`
         <button class="weekbtn" data-u="${u.id}">
           <span class="wem" aria-hidden="true">${u.e}</span>
-          <span style="min-width:0"><span class="lbl-s">${i+1}단원</span><span class="t">${esc(u.t)}</span><span class="hjrow">${u.chars.map(c=>c.c).join(' ')}</span></span>
-          <span class="meter">${hs.trophies[u.id]?'🏆':'<b>⭐</b>'}${hjCount(u)}/${HGS.length}</span>
+          <span style="min-width:0"><span class="lbl-s">${i+1}단원</span><span class="t">${esc(u.t)}</span><span class="hjrow">${u.vs ? u.vs.map(v=>v.c).join(' ') : u.chars.map(c=>c.c).join(' ')}</span></span>
+          <span class="meter">${hs.trophies[u.id]?'🏆':'<b>⭐</b>'}${hjCount(u)}/${hjGames(u).length}</span>
         </button>`).join('')}
     </div>`;
   stage.querySelectorAll('.weekbtn[data-u]').forEach(b=>b.onclick=()=>hjMenu(b.dataset.u));
 }
-const hjLevelOf = u => HJ.levels.find(l=>l.units.includes(u));
 
 async function hjMenu(id){
-  const u = hjUnit(id), title = u.t;
+  const u = hjUnit(id), title = u.t, G = hjGames(u);
   curLang = 'hj'; updateBar();
   nav(title, ()=>hjLevel(hjLevelOf(u).id));
   stage.innerHTML = `<div class="progress">Loading…</div>`;
   await Promise.all([loadAudio(id), loadAudio('hj-shared')]);
   if($('#barName').textContent !== title) return;
   stage.innerHTML = `
-    <div class="hero"><div class="hjrow hjbig" aria-hidden="true">${u.chars.map(c=>c.c).join(' ')}</div><h1>${esc(u.t)}</h1><p>하고 싶은 놀이를 골라요</p></div>
+    <div class="hero"><div class="hjrow hjbig" aria-hidden="true">${u.vs ? u.vs.map(v=>v.c).join(' ') : u.chars.map(c=>c.c).join(' ')}</div><h1>${esc(u.t)}</h1><p>${u.vs ? esc(u.vs.map(v=>v.r).join(' · ')) : '하고 싶은 놀이를 골라요'}</p></div>
     <div class="grid2">
-      ${HGS.map(g=>`
+      ${G.map(g=>`
         <button class="stagebtn ${hjDone(u,g.id)?'done':''}" data-g="${g.id}">
           <span class="num">${g.e}</span>
           <span style="min-width:0"><span class="t">${g.t}</span><span class="k">${g.k}</span></span>
           <span class="stk" aria-hidden="true">${hjDone(u,g.id)?'⭐':''}</span>
         </button>`).join('')}
     </div>
-    <div class="guide">엄마 가이드: 1번 새 한자 카드부터 하면 좋아요.</div>`;
+    <div class="guide">${u.vs ? '가이드: 음 카드 → 음 맞히기를 먼저 하고, 낱말 사냥으로 넘어가요.' : '엄마 가이드: 1번 새 한자 카드부터 하면 좋아요.'}</div>`;
   stage.querySelectorAll('.stagebtn').forEach(b=>b.onclick=()=>HGAME[b.dataset.g](u));
 }
-function hjNav(u, gid){ const g=HGS.find(x=>x.id===gid); nav(`${u.t} · ${g.t}`, ()=>hjMenu(u.id)); }
+function hjNav(u, gid){ const g=hjGames(u).find(x=>x.id===gid); nav(`${u.t} · ${g.t}`, ()=>hjMenu(u.id)); }
 
 function hjReward(u, gid){
-  const hs = hjState(); hs.done[u.id+':'+gid] = true;
+  const hs = hjState(), HGS = hjGames(u); hs.done[u.id+':'+gid] = true;
   const all = HGS.every(g=>hs.done[u.id+':'+g.id]); const newTrophy = all && !hs.trophies[u.id];
   if(all) hs.trophies[u.id] = true;
   save();
@@ -291,6 +300,7 @@ function hjWord(u){
 }
 
 const HGAME = {learn:hjLearn, memory:hjMemory, listen:hjListen, hunum:hjHunum, trace:hjTrace, word:hjWord};
+/* Level 2 (천자문) games live in hanja2.js and register themselves into HGAME */
 
 /* 한자 도감 — every character collected so far; tap to hear */
 function hjDogam(){

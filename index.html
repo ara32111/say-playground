@@ -365,6 +365,43 @@ main::before,main::after{content:"";margin:auto}
 :root[data-device="phone"] .hjgrid{grid-template-columns:repeat(5,minmax(0,1fr))}
 :root[data-device="phone"] .dcard .dhj{font-size:30px}
 :root[data-device="phone"] .hjrow.hjbig{font-size:30px}
+/* 천자문 Level 2 */
+.vstrip{display:flex;gap:8px;justify-content:center}
+.vstrip .vc{font-family:"Noto Serif KR",serif;font-weight:700;font-size:clamp(26px,5vmin,40px);width:1.5em;height:1.5em;display:flex;align-items:center;justify-content:center;border-radius:14px;background:rgba(255,253,247,.55);color:var(--ink-soft)}
+.vstrip .vc.on{background:var(--card);color:#C0392B;outline:4px solid var(--butter);box-shadow:var(--shadow)}
+.eumcard{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--card);border-radius:32px;box-shadow:var(--shadow);border:5px solid var(--butter);padding:12px clamp(28px,6vmin,56px) 16px}
+.eumcard .ehj{font-size:clamp(100px,20vmin,170px);line-height:1.05;color:var(--ink)}
+.eumline{display:flex;align-items:baseline;gap:12px;font-family:var(--f-ko)}
+.eumline .hun{font-size:clamp(22px,4vmin,32px);color:var(--ink-soft)}
+.eum{font-family:var(--f-ko);font-size:clamp(54px,11vmin,90px);line-height:1;color:#C0392B}
+.eum.q{color:var(--ink-soft);opacity:.6}
+.card .tw.eumopt{font-size:clamp(34px,6.5vmin,54px);color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:680px}
+.chip2{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:8px 16px;font-family:var(--f-ko);font-size:clamp(20px,3.6vmin,28px);color:var(--ink);display:flex;gap:8px;align-items:center}
+.chip2 .hjc{font-size:1.3em}
+.ys{color:#C0392B;text-decoration:underline 3px;text-underline-offset:6px}
+.huntq{display:flex;align-items:center;gap:18px}
+.huntq .qhj{font-size:clamp(80px,15vmin,130px);line-height:1;color:var(--ink);background:var(--card);border-radius:28px;box-shadow:var(--shadow);padding:6px 18px}
+.card .hz{font-family:"Noto Serif KR",serif;font-weight:700;font-size:clamp(16px,3vmin,22px);color:var(--ink-soft)}
+.reveal{background:var(--card);border-radius:24px;box-shadow:var(--shadow);padding:12px 22px;display:flex;flex-direction:column;gap:6px;align-items:center}
+.rvline{display:flex;gap:16px;align-items:baseline;font-size:clamp(24px,4.4vmin,34px)}
+.rvline .rvhz{color:var(--ink-soft)}
+.vrow{display:flex;gap:clamp(8px,2vmin,18px);justify-content:center}
+.vcol{display:flex;flex-direction:column;align-items:center;gap:8px}
+.vhj{font-size:clamp(54px,10vmin,84px);line-height:1;color:var(--ink);background:var(--card);border-radius:20px;box-shadow:var(--shadow);width:1.35em;height:1.35em;display:flex;align-items:center;justify-content:center;transition:transform .2s}
+.vhj.cur{outline:5px solid var(--butter);color:#C0392B;transform:translateY(-4px)}
+.vhj.gap{color:var(--ink-soft);border:4px dashed var(--ink-soft);box-shadow:none;background:rgba(255,253,247,.5)}
+.vread{font-family:var(--f-ko);font-size:clamp(22px,4vmin,32px);color:var(--ink-soft)}
+.fbar{width:min(520px,100%);height:12px;border-radius:6px;background:rgba(36,48,92,.12);overflow:hidden}
+.fbar i{display:block;height:100%;background:var(--butter);animation:fbar 4s linear forwards}
+@keyframes fbar{from{width:100%}to{width:0}}
+:root[data-device="phone"] .eumcard .ehj{font-size:100px}
+:root[data-device="phone"] .eum{font-size:52px}
+:root[data-device="phone"] .card .tw.eumopt{font-size:30px}
+:root[data-device="phone"] .vhj{font-size:44px;border-radius:14px}
+:root[data-device="phone"] .vstrip .vc{font-size:26px}
+:root[data-device="phone"] .huntq .qhj{font-size:72px}
+:root[data-device="phone"] .chip2{font-size:19px;padding:6px 12px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -379,8 +416,8 @@ main::before,main::after{content:"";margin:auto}
   <main id="stage"></main>
 </div>
 
-<script src="days.js?v=16"></script>
-<script src="ko-data.js?v=16"></script>
+<script src="days.js?v=17"></script>
+<script src="ko-data.js?v=17"></script>
 <script src="audio/shared.js"></script>
 <script src="audio/ko-shared.js"></script>
 <script>
@@ -888,12 +925,13 @@ $('#slowBtn').onclick = ()=>{ state.slow=!state.slow; save(); updateBar(); sayOn
 updateBar();
 landing();
 </script>
-<script src="hangul.js?v=16"></script>
-<script src="ph-data.js?v=16"></script>
-<script src="phonics.js?v=16"></script>
-<script src="math.js?v=16"></script>
-<script src="hj-data.js?v=16"></script>
-<script src="hanja.js?v=16"></script>
+<script src="hangul.js?v=17"></script>
+<script src="ph-data.js?v=17"></script>
+<script src="phonics.js?v=17"></script>
+<script src="math.js?v=17"></script>
+<script src="hj-data.js?v=17"></script>
+<script src="hanja.js?v=17"></script>
+<script src="hanja2.js?v=17"></script>
 
 </body>
 </html>
