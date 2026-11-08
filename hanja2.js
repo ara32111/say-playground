@@ -6,8 +6,6 @@ const hjSyls = ch => [ch.y, ch.y2].filter(Boolean);
 const hjVerseOf = (u, ch) => u.vs.find(v=>v.c.includes(ch.c));
 /* a word with the 음 syllable underlined in red */
 const hjWordHtml = (w, k, on=true) => [...w].map((s,j)=> j===k && on ? `<span class="ys">${esc(s)}</span>` : esc(s)).join('');
-/* every word in Level 2 (targets and look-alikes), used as decoys */
-const hjAllWords = () => { const m = new Map(); hjL2().units.forEach(u=>u.chars.forEach(ch=>[...ch.wd, ...ch.tr].forEach(([w,,e])=>{ if(!m.has(w)) m.set(w,{w,e}); }))); return [...m.values()]; };
 /* up to n other characters whose 음 differs from ch (so no two options sound alike) */
 function hjOtherEum(ch, pool, n){
   const seen = new Set(hjSyls(ch)), out = [];
@@ -71,36 +69,32 @@ function hjEum(u){
   show();
 }
 
-/* 3. 낱말 사냥 — "천" 소리가 들어간 낱말을 모두 찾기; then show each word's 한자 */
+/* 3. 소리 듣고 찾기 — hear only the 음 ("현"), pick that character among six.
+   Options never share a sound with the answer; a missed character comes back once at the end. */
 function hjHunt(u){
-  hjNav(u,'hunt');
-  const R = shuffle(u.chars.filter(c=>c.wd.length)).slice(0,5), all = hjAllWords(); let i=0;
+  hjNav(u,'hunt'); const Q = shuffle(u.chars), again = new Set(); let i=0;
+  const pool = hjL2().units.flatMap(x=>x.chars);
   function show(){
-    const ch = R[i], syls = hjSyls(ch);
-    const T = ch.wd.slice(0,3).map(([w,k,e,hz])=>({w,k,e,hz,t:true}));
-    const n = T.length>=2 ? 6 : 4;
-    const D = shuffle(all.filter(x=>!syls.some(s=>x.w.includes(s)))).slice(0, n-T.length).map(x=>({...x,k:-1}));
-    const cards = shuffle([...T, ...D]); let found=0, locked=false;
+    const ch = Q[i]; let locked=false, missed=false;
+    let others = hjOtherEum(ch, u.chars, 5);
+    if(others.length<5) others = others.concat(hjOtherEum(ch, pool.filter(x=>!u.chars.includes(x) && !others.some(o=>hjSyls(o).some(s=>hjSyls(x).includes(s)))), 5-others.length));
+    const opts = shuffle([ch, ...others]);
     stage.innerHTML = `
-      <div class="progress">${i+1} / ${R.length}</div>
-      <div class="huntq"><span class="hjc qhj">${ch.c}</span><span class="eum">${esc(hjYs(ch))}</span></div>
-      <div class="bubble wrap ko-s">"<b>${esc(syls.join('" 또는 "'))}</b>" 소리가 들어간 낱말을 모두 찾아요! <span id="cnt">(0 / ${T.length})</span></div>
-      <div class="cards three">${cards.map((c,j)=>`<button class="card" data-j="${j}"><span class="tface" aria-hidden="true">${c.e}</span><span class="tw ko-w">${esc(c.w)}</span></button>`).join('')}</div>
-      <div id="rv"></div>`;
-    sayOne(ch.h);
-    stage.querySelectorAll('.card').forEach(el=>el.onclick=async ()=>{
-      const c = cards[+el.dataset.j];
-      if(locked || el.classList.contains('wrong') || el.classList.contains('right')) return;
-      if(!c.t){ el.classList.add('wrong'); bad(el); return; }
-      el.classList.add('right'); good(el); el.querySelector('.tw').innerHTML = hjWordHtml(c.w, c.k);
-      found++; $('#cnt').textContent = `(${found} / ${T.length})`;
-      if(found<T.length){ sayOne(c.w); return; }
-      locked = true; hjCollect(ch); await sayOne(c.w); await wait(300);
-      $('#rv').innerHTML = `<div class="reveal">${T.map(t=>`<div class="rvline"><span class="ko-w">${hjWordHtml(t.w,t.k)}</span><span class="hjc rvhz">${esc(t.hz)}</span></div>`).join('')}
-        <div class="guide">모두 ${ch.c} (${esc(ch.h)})가 들어 있어요!</div></div>${hjNextBtn(i<R.length-1?'다음 ➜':'끝! 🎉')}`;
-      $('#next').onclick = ()=>{ i++; i<R.length ? show() : hjReward(u,'hunt'); };
-      $('#rv').scrollIntoView({behavior:'smooth', block:'nearest'});
-      await say(ch.h);
+      <div class="progress">${i+1} / ${Q.length}</div>
+      <div class="chef"><div class="face" aria-hidden="true">🐻</div><div class="bubble ko-s">소리를 듣고 한자를 골라요!</div><button class="iconbtn" id="again" aria-label="다시 듣기">🔊</button></div>
+      <div class="cards three">${opts.map(o=>`<button class="card" data-c="${o.c}"><span class="hjc cardhj">${o.c}</span></button>`).join('')}</div>
+      <div class="hint ko-s" id="hint"></div>`;
+    const play = ()=>sayOne(ch.y);
+    play(); $('#again').onclick = play;
+    stage.querySelectorAll('.card').forEach(c=>c.onclick=async ()=>{
+      if(locked || c.classList.contains('wrong')) return;
+      if(c.dataset.c===ch.c){
+        locked=true; c.classList.add('right'); good(c); hjCollect(ch); $('#hint').textContent = ch.h;
+        await sayOne(ch.h); await wait(450); i++; i<Q.length ? show() : hjReward(u,'hunt');
+      }else{
+        c.classList.add('wrong'); bad(c);
+        if(!missed && !again.has(ch.c)){ missed=true; again.add(ch.c); Q.push(ch); $('.progress').textContent = `${i+1} / ${Q.length} · 틀린 글자는 한 번 더 나와요`; }
+      }
     });
   }
   show();

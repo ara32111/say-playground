@@ -13,7 +13,7 @@ const HGS = [
 const HGS2 = [
   {id:'ecard',  t:'음 카드',     k:'한자를 보고 음을 크게!',          e:'📜'},
   {id:'eum',    t:'음 맞히기',    k:'한자 보고 소리 고르기',           e:'🔤'},
-  {id:'hunt',   t:'낱말 사냥',    k:'"천" 소리가 든 낱말 찾기',        e:'🎈'},
+  {id:'hunt',   t:'소리 듣고 찾기', k:'"현" 소리 듣고 한자 고르기',      e:'👂'},
   {id:'friend', t:'진짜 친구',    k:'같은 소리, 다른 한자 구별',        e:'🕵️'},
   {id:'verse',  t:'구절 읽기',    k:'천지현황 순서대로 읽기',           e:'🎋'},
   {id:'flash',  t:'번개 읽기',    k:'배운 한자 빨리 읽기',             e:'⚡'}
@@ -82,7 +82,7 @@ async function hjMenu(id){
           <span class="stk" aria-hidden="true">${hjDone(u,g.id)?'⭐':''}</span>
         </button>`).join('')}
     </div>
-    <div class="guide">${u.vs ? '가이드: 음 카드 → 음 맞히기를 먼저 하고, 낱말 사냥으로 넘어가요.' : '엄마 가이드: 1번 새 한자 카드부터 하면 좋아요.'}</div>`;
+    <div class="guide">${u.vs ? '가이드: 음 카드 → 음 맞히기 → 소리 듣고 찾기 순서로 하면 좋아요.' : '엄마 가이드: 1번 새 한자 카드부터 하면 좋아요.'}</div>`;
   stage.querySelectorAll('.stagebtn').forEach(b=>b.onclick=()=>HGAME[b.dataset.g](u));
 }
 function hjNav(u, gid){ const g=hjGames(u).find(x=>x.id===gid); nav(`${u.t} · ${g.t}`, ()=>hjMenu(u.id)); }
