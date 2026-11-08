@@ -198,7 +198,9 @@ main::before,main::after{content:"";margin:auto}
 :root[data-device="phone"] .mw{font-size:20px}:root[data-device="phone"] .mw.s{font-size:17px}:root[data-device="phone"] .mw.xs{font-size:14px}
 :root[data-device="phone"] .cards.three{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 :root[data-device="phone"] .card.wordonly .tw{font-size:19px}
-:root[data-device="phone"] .tracebox{height:170px}
+:root[data-device="phone"] .tracebox{height:min(300px,46vh);width:calc(100% + 20px);margin:0 -10px;border-radius:20px}
+:root[data-device="phone"] .tracebtns .big{padding:10px 12px;font-size:16px}
+:root[data-device="phone"] .tracebtns{gap:8px}
 :root[data-device="phone"] .pen{width:36px;height:36px}
 :root[data-device="phone"] .dgrid{grid-template-columns:repeat(4,minmax(0,1fr))}
 :root[data-device="phone"] .bubble.wrap{font-size:17px}
@@ -335,8 +337,8 @@ main::before,main::after{content:"";margin:auto}
   <main id="stage"></main>
 </div>
 
-<script src="days.js?v=15"></script>
-<script src="ko-data.js?v=15"></script>
+<script src="days.js?v=16"></script>
+<script src="ko-data.js?v=16"></script>
 <script src="audio/shared.js"></script>
 <script src="audio/ko-shared.js"></script>
 <script>
@@ -841,10 +843,10 @@ $('#slowBtn').onclick = ()=>{ state.slow=!state.slow; save(); updateBar(); sayOn
 updateBar();
 landing();
 </script>
-<script src="hangul.js?v=15"></script>
-<script src="ph-data.js?v=15"></script>
-<script src="phonics.js?v=15"></script>
-<script src="math.js?v=15"></script>
+<script src="hangul.js?v=16"></script>
+<script src="ph-data.js?v=16"></script>
+<script src="phonics.js?v=16"></script>
+<script src="math.js?v=16"></script>
 
 </body>
 </html>

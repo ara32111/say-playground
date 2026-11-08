@@ -237,13 +237,15 @@ function koTrace(th){
       <div class="tracebox" id="tb"><canvas id="cg"></canvas><canvas id="cu"></canvas></div>
       <div class="row">
         ${['#E4407A','#2F74E0','#2FA866','#F29D1F'].map(c=>`<button class="pen ${c===color?'on':''}" data-c="${c}" style="--pc:${c}" aria-label="pen color"></button>`).join('')}
-        <button class="big alt" id="clr">🧽 지우기</button><button class="big go" id="done">다 썼어요!</button>
+      </div>
+      <div class="row tracebtns">
+        <button class="big alt" id="undo">↩️ 한 획 지우기</button><button class="big alt" id="clr">🧽 다 지우기</button><button class="big go" id="done">다 썼어요!</button>
       </div>
       <div class="hint ko-s" id="hint"></div>`;
     const tb=$('#tb'), cg=$('#cg'), cu=$('#cu'), dpr=Math.max(1, window.devicePixelRatio||1);
     const W=tb.clientWidth, H=tb.clientHeight;
     [cg,cu].forEach(c=>{ c.width=W*dpr; c.height=H*dpr; c.getContext('2d').scale(dpr,dpr); });
-    const n=[...w.w].length, fs=Math.min(H*0.78, (W*0.88)/n);
+    const n=[...w.w].length, fs=Math.min(H*0.8, (W*0.94)/n);
     const font = `${fs}px "Gowun Dodum", "Apple SD Gothic Neo", sans-serif`;
     try{ await document.fonts.load(font, w.w); }catch(e){}
     const drawGuide = (ctx, col)=>{ ctx.font=font; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillStyle=col; ctx.strokeStyle=col; ctx.lineWidth=fs*0.11; ctx.lineJoin='round'; ctx.strokeText(w.w,W/2,H/2+fs*0.04); ctx.fillText(w.w,W/2,H/2+fs*0.04); };
@@ -252,11 +254,12 @@ function koTrace(th){
     const mctx = mask.getContext('2d'); mctx.scale(dpr,dpr); drawGuide(mctx,'#000');
     const ux = cu.getContext('2d'); let drawing=false, last=null;
     const pt = e=>{ const r=cu.getBoundingClientRect(); return [e.clientX-r.left, e.clientY-r.top]; };
-    cu.onpointerdown = e=>{ drawing=true; last=pt(e); cu.setPointerCapture(e.pointerId); ux.fillStyle=color; ux.beginPath(); ux.arc(last[0],last[1],fs*0.065,0,Math.PI*2); ux.fill(); };
+    const hist=[]; cu.onpointerdown = e=>{ hist.push(ux.getImageData(0,0,cu.width,cu.height)); if(hist.length>40) hist.shift(); drawing=true; last=pt(e); cu.setPointerCapture(e.pointerId); ux.fillStyle=color; ux.beginPath(); ux.arc(last[0],last[1],fs*0.065,0,Math.PI*2); ux.fill(); };
     cu.onpointermove = e=>{ if(!drawing) return; const p=pt(e); ux.strokeStyle=color; ux.lineWidth=fs*0.13; ux.lineCap='round'; ux.lineJoin='round'; ux.beginPath(); ux.moveTo(last[0],last[1]); ux.lineTo(p[0],p[1]); ux.stroke(); last=p; };
     cu.onpointerup = cu.onpointercancel = ()=>{ drawing=false; };
     stage.querySelectorAll('.pen').forEach(p=>p.onclick=()=>{ color=p.dataset.c; stage.querySelectorAll('.pen').forEach(q=>q.classList.toggle('on', q===p)); });
-    $('#clr').onclick = ()=>{ ux.clearRect(0,0,W,H); $('#hint').textContent=''; };
+    $('#clr').onclick = ()=>{ hist.push(ux.getImageData(0,0,cu.width,cu.height)); ux.clearRect(0,0,W,H); $('#hint').textContent=''; };
+    $('#undo').onclick = ()=>{ if(!hist.length){ boop(); return; } ux.putImageData(hist.pop(),0,0); $('#hint').textContent=''; };
     $('#done').onclick = async ()=>{
       const g = mctx.getImageData(0,0,mask.width,mask.height).data, u = ux.getImageData(0,0,cu.width,cu.height).data;
       let gp=0, cov=0, up=0, out=0; const step=3*Math.round(dpr)*4, rowStep=3*Math.round(dpr);
