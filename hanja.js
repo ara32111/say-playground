@@ -34,6 +34,7 @@ function hjHome(){
     <div class="hero"><h1>한자 놀이터</h1><p>레벨을 골라요</p></div>
     <div class="grid2">
       ${HJ.levels.map(l=>{
+        if(l.id==='L3') return hjSyLevelBtn(l);
         const n = l.units.reduce((a,u)=>a+u.chars.length,0), got = l.units.reduce((a,u)=>a+u.chars.filter(c=>hs.chars[c.c]).length,0);
         return l.soon ? `
         <button class="weekbtn soon" disabled><span class="wem" aria-hidden="true">${l.e}</span>
@@ -44,7 +45,7 @@ function hjHome(){
       <button class="weekbtn review" id="hjDogamBtn"><span class="wem" aria-hidden="true">📚</span>
         <span style="min-width:0"><span class="t">한자 도감</span><span class="k">모은 한자 카드 보기</span></span></button>
     </div>`;
-  stage.querySelectorAll('.weekbtn[data-l]').forEach(b=>b.onclick=()=>hjLevel(b.dataset.l));
+  stage.querySelectorAll('.weekbtn[data-l]').forEach(b=>b.onclick=()=> b.dataset.l==='L3' ? hjSyLevel() : hjLevel(b.dataset.l));
   $('#hjDogamBtn').onclick = hjDogam;
 }
 
@@ -309,7 +310,7 @@ function hjDogam(){
   const hs = hjState();
   stage.innerHTML = `
     <div class="hero"><h1>한자 도감 📚</h1><p>놀이에서 만난 한자가 여기에 모여요 · ${Object.keys(hs.chars).length}자</p></div>
-    ${HJ.levels.filter(l=>!l.soon).map(l=>l.units.map(u=>`
+    ${HJ.levels.filter(l=>!l.soon && l.id!=='L3').map(l=>l.units.map(u=>`
       <div class="dg-sec"><div class="dg-t">${u.e} ${esc(u.t)}</div>
         <div class="dgrid hjgrid">${u.chars.map(ch=> hs.chars[ch.c]
           ? `<button class="dcard" data-u="${u.id}" data-c="${ch.c}"><span class="hjc dhj">${ch.c}</span><span class="mw xs">${esc(ch.h)}</span></button>`

@@ -405,6 +405,22 @@ main::before,main::after{content:"";margin:auto}
 :root[data-device="phone"] .vstrip .vc{font-size:26px}
 :root[data-device="phone"] .huntq .qhj{font-size:72px}
 :root[data-device="phone"] .chip2{font-size:19px;padding:6px 12px}
+/* 사자성어 Level 3 */
+.sycard{min-height:110px;gap:6px}
+.sycard .syhj{font-size:clamp(30px,6vmin,46px);letter-spacing:2px;color:var(--ink);line-height:1.1}
+.sycard .syr{font-family:var(--f-ko);font-size:clamp(18px,3.4vmin,26px);color:var(--ink-soft)}
+.sycard.locked{opacity:.4;box-shadow:none}
+.sygrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:min(560px,100%)}
+.hjrow.syrow{font-size:16px;letter-spacing:1px;white-space:normal}
+.vhj.known{outline:4px solid #C0392B;outline-offset:-2px}
+.syhun{font-family:var(--f-ko);font-size:clamp(14px,2.6vmin,19px);color:var(--ink-soft);white-space:nowrap}
+.syname{font-family:var(--f-ko);font-size:clamp(28px,5vmin,40px);color:#C0392B}
+.symean{font-size:clamp(18px,3.4vmin,24px);text-align:center;max-width:560px;line-height:1.45}
+.syrev{gap:10px;max-width:100%;box-sizing:border-box}
+:root[data-device="phone"] .sycard .syhj{font-size:30px}
+:root[data-device="phone"] .sycard .syr{font-size:17px}
+:root[data-device="phone"] .syhun{font-size:12px}
+:root[data-device="phone"] .syrev .vhj{font-size:40px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -419,8 +435,8 @@ main::before,main::after{content:"";margin:auto}
   <main id="stage"></main>
 </div>
 
-<script src="days.js?v=20"></script>
-<script src="ko-data.js?v=20"></script>
+<script src="days.js?v=21"></script>
+<script src="ko-data.js?v=21"></script>
 <script src="audio/shared.js"></script>
 <script src="audio/ko-shared.js"></script>
 <script>
@@ -928,13 +944,14 @@ $('#slowBtn').onclick = ()=>{ state.slow=!state.slow; save(); updateBar(); sayOn
 updateBar();
 landing();
 </script>
-<script src="hangul.js?v=20"></script>
-<script src="ph-data.js?v=20"></script>
-<script src="phonics.js?v=20"></script>
-<script src="math.js?v=20"></script>
-<script src="hj-data.js?v=20"></script>
-<script src="hanja.js?v=20"></script>
-<script src="hanja2.js?v=20"></script>
+<script src="hangul.js?v=21"></script>
+<script src="ph-data.js?v=21"></script>
+<script src="phonics.js?v=21"></script>
+<script src="math.js?v=21"></script>
+<script src="hj-data.js?v=21"></script>
+<script src="hanja.js?v=21"></script>
+<script src="hanja2.js?v=21"></script>
+<script src="hanja3.js?v=21"></script>
 
 </body>
 </html>
