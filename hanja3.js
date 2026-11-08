@@ -1,5 +1,6 @@
 /* ===== 한자 놀이터 Level 3 · 사자성어 — light check: read the example, pick the idiom (한자 + 한글) ===== */
 const hjL3 = () => HJ.levels.find(l=>l.id==='L3');
+const SY_HINT = true;   /* 보기 카드의 한글 읽기는 숨기고 💡 힌트로 1초만 보여 줘요 */
 const hjSyAll = () => hjL3().units.flatMap(u=>u.sy);
 function hjSyState(){ const hs = hjState(); hs.sy = hs.sy || {}; hs.syDone = hs.syDone || {}; return hs; }
 /* characters met in Level 1 and 2 count as "아는 글자" */
@@ -52,10 +53,15 @@ async function hjSyQuiz(u){
       <div class="progress">${i+1} / ${Q.length}</div>
       <div class="chef"><div class="face" aria-hidden="true">🐻</div><div class="bubble wrap ko-s">${esc(y.x)}</div><button class="iconbtn" id="again" aria-label="다시 듣기">🔊</button></div>
       <div class="guide">어떤 사자성어일까요?</div>
-      <div class="cards two">${opts.map(o=>`<button class="card sycard" data-c="${o.c}"><span class="hjc syhj">${o.c}</span><span class="syr">${esc(o.r)}</span></button>`).join('')}</div>
+      ${SY_HINT ? `<button class="big alt" id="hintBtn">💡 힌트</button>` : ''}
+      <div class="cards two">${opts.map(o=>`<button class="card sycard" data-c="${o.c}"><span class="hjc syhj">${o.c}</span><span class="syr" ${SY_HINT?'hidden':''}>${esc(o.r)}</span></button>`).join('')}</div>
       <div id="rv"></div>`;
     const play = ()=>sayAll(y.x, '어떤 사자성어일까요?');
     play(); $('#again').onclick = play;
+    /* 한글 읽기는 💡 힌트로 1초만 보여요 */
+    let hintT = 0; const rs = ()=>stage.querySelectorAll('.sycard .syr');
+    if(SY_HINT) $('#hintBtn').onclick = ()=>{ const b=$('#hintBtn'); rs().forEach(r=>r.hidden=false); b.disabled=true; clearTimeout(hintT);
+      hintT = setTimeout(()=>{ if(locked || !document.body.contains(b)) return; rs().forEach(r=>r.hidden=true); b.disabled=false; }, 1000); };
     stage.querySelectorAll('.card').forEach(c=>c.onclick=async ()=>{
       if(locked || c.classList.contains('wrong')) return;
       if(c.dataset.c!==y.c){
@@ -64,6 +70,7 @@ async function hjSyQuiz(u){
         return;
       }
       locked=true; c.classList.add('right'); good(c); hs.sy[y.c] = true; addStar();
+      if(SY_HINT){ clearTimeout(hintT); rs().forEach(r=>r.hidden=false); $('#hintBtn').disabled=true; }
       $('#rv').innerHTML = `<div class="reveal syrev">${hjSyChars(y)}<div class="syname">${esc(y.r)}</div><div class="symean ko-s">${esc(y.m)}</div>
         <div class="guide">빨간 테두리 = 배운 한자</div></div>
         <div class="row"><button class="big go" id="next">${i<Q.length-1?'다음 ➜':'끝! 🎉'}</button></div>`;
