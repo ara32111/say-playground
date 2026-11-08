@@ -52,7 +52,9 @@ function hjEum(u){
       <button class="big alt" id="hintBtn">💡 힌트</button>
       <div class="cards">${opts.map(o=>`<button class="card wordonly" data-c="${o.c}"><span class="tw ko-w hunopt">${esc(o.h)}</span></button>`).join('')}</div>
       <div class="hint ko-s" id="hint"></div>`;
-    $('#hintBtn').onclick = ()=>{ $('#hun').hidden = false; $('#hintBtn').disabled = true; };
+    let hintT = 0;   /* 💡 shows the 훈 for 1 second, then hides it again (can be pressed again) */
+    $('#hintBtn').onclick = ()=>{ const h=$('#hun'), b=$('#hintBtn'); h.hidden = false; b.disabled = true; clearTimeout(hintT);
+      hintT = setTimeout(()=>{ if(locked || !document.body.contains(h)) return; h.hidden = true; b.disabled = false; }, 1000); };
     stage.querySelectorAll('.card').forEach(c=>c.onclick=async ()=>{
       if(locked || c.classList.contains('wrong')) return;
       if(c.dataset.c===ch.c){
