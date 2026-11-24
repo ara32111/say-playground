@@ -47,12 +47,12 @@ const qWord = th => th.who ? '누구일까요?' : '무엇일까요?';
 async function koPraise(){ const n=(state.name||'').trim().toLowerCase(); if(n==='daisy'||n==='데이지') return say('데이지, 잘했어요!'); return say('잘했어요!'); }
 
 /* ---------- screens ---------- */
-function koHome(){
+function koL1(){
   curLang = 'ko'; updateBar();
-  nav('한글 놀이터', landing);
+  nav('1단계 · 이름 말', koHome);
   const ks = koState(), total = KO.themes.reduce((a,t)=>a+t.words.length,0), got = Object.keys(ks.words).length;
   stage.innerHTML = `
-    <div class="hero"><h1>한글 놀이터</h1><p>주제를 골라요</p></div>
+    <div class="hero"><h1>이름 말</h1><p>주제를 골라요</p></div>
     <div class="grid2">
       ${KO.themes.map(t=>`
         <button class="weekbtn" data-t="${t.id}">
@@ -73,7 +73,7 @@ function koHome(){
 async function koMenu(id){
   const th = koTheme(id);
   curLang = 'ko'; updateBar();
-  nav(th.t, koHome);
+  nav(th.t, koL1);
   stage.innerHTML = `<div class="progress">Loading…</div>`;
   await loadAudio(id);
   if($('#barName').textContent !== th.t) return;
@@ -334,7 +334,7 @@ const KGAME = {learn:koLearn, memory:koMemory, balloon:koBalloon, poke:koPoke, t
 /* 단어 도감 — every word collected so far; tap a card to hear it */
 function dogam(){
   curLang='ko'; updateBar();
-  nav('단어 도감', koHome);
+  nav('단어 도감', koL1);
   const ks = koState();
   stage.innerHTML = `
     <div class="hero"><h1>단어 도감 📚</h1><p>놀이에서 맞힌 낱말이 여기에 모여요 · ${Object.keys(ks.words).length}개</p></div>
