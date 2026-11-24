@@ -1,7 +1,7 @@
 /* ===== 한글 3단계 · 짧은 글 읽기 (uses helpers from the main page, hangul.js, vocab.js) ===== */
 const K3 = window.KO3DATA || {units:[], retell:{}};
 function r3State(){ const ks = koState(); if(!ks.r3) ks.r3 = {done:{}, clue:0}; return ks.r3; }
-const STEPS = ['들어요','같이 읽어요','혼자 읽어요','질문','다시 말해요'];
+const STEPS = ['미리 짐작','들어요','소리 내어 읽기','질문','다시 말해요'];
 const R3INTRO = {'써 있는 것':'글에 써 있는 것을 찾아봐요!', '짐작하는 것':'짐작해 봐요!'};
 const r3Count = u => u.texts.filter(x=>r3State().done[x.id]).length;
 
@@ -70,6 +70,19 @@ function r3Lesson(u, x){
   const go = fn => { step++; fn(); };
   nav(`${x.t}`, back);
 
+  /* 0. 미리 짐작: title + picture only, pick 1·2·3 — no right/wrong yet */
+  let pick = null; const preOpts = shuffle(x.pre.o);
+  function s0(){
+    stage.innerHTML = `${bar()}
+      <div class="r3pre"><span class="em" aria-hidden="true">${x.e}</span><span class="pt">${esc(x.t)}</span><span class="r3kind">${x.kind}글</span></div>
+      ${bear('이번에 나올 내용은 무엇일까요?')}
+      <div class="r3picks">${preOpts.map((o,k)=>`<button class="r3pick" data-k="${esc(o)}"><span class="pn">${k+1}</span><span>${esc(o)}</span></button>`).join('')}</div>`;
+    const play = ()=>sayOne('이번에 나올 내용은 무엇일까요?'); play(); $('#again').onclick = play;
+    stage.querySelectorAll('.r3pick').forEach(b=>b.onclick=async ()=>{
+      if(pick) return; pick = b.dataset.k; b.classList.add('chosen'); ding(); addStar();
+      await sayOne('좋아요! 읽으면서 확인해 봐요.'); await wait(300); go(s1);
+    });
+  }
   /* 1. 들어요 */
   function s1(){
     stage.innerHTML = `${bar()}${textBox()}${bear('글을 잘 들어 봐요!')}
@@ -78,27 +91,32 @@ function r3Lesson(u, x){
     play(); $('#again').onclick = play; $('#re').onclick = readAll;
     $('#nx').onclick = ()=>{ addStar(); go(s2); };
   }
-  /* 2. 같이 읽어요: one sentence at a time, child first */
+  /* 2. 소리 내어 읽기: one sentence at a time, child first, 🔊 after; mom ⭕ at the end */
   function s2(){
     let k = 0;
     function one(){
+      const last = k===x.s.length-1;
       stage.innerHTML = `${bar()}${textBox('focus')}${bear('이 문장을 소리 내어 읽어 봐요!')}
-        <div class="row"><button class="big alt" id="hear">🔊 들어 보기</button><button class="big go" id="nx">${k<x.s.length-1?'다음 문장 ➜':'다 읽었어요 ➜'}</button></div>`;
+        <div class="row"><button class="big alt" id="hear">🔊 들어 보기</button>${last
+          ? `<button class="big alt" id="more">🔁 처음부터</button><button class="big go" id="ok">⭕ 잘 읽었어요!</button>`
+          : `<button class="big go" id="nx">다음 문장 ➜</button>`}</div>
+        ${last?'<p class="guide">끝까지 읽었으면 엄마가 ⭕를 눌러 주세요</p>':''}`;
       hl(k); const play = ()=>sayOne('이 문장을 소리 내어 읽어 봐요!'); if(k===0) play(); $('#again').onclick = play;
       $('#hear').onclick = ()=>sayOne(x.s[k]);
-      $('#nx').onclick = ()=>{ addStar(); k++; k<x.s.length ? one() : go(s3); };
+      if(last){ $('#more').onclick = ()=>{ k=0; one(); }; $('#ok').onclick = ()=>{ good($('#ok')); step++; checkPre(); }; }
+      else $('#nx').onclick = ()=>{ addStar(); k++; one(); };
     }
     one();
   }
-  /* 3. 혼자 읽어요: read first, then check */
-  function s3(){
-    stage.innerHTML = `${bar()}${textBox()}${bear('이제 혼자 읽어 봐요!')}
-      <div class="row" id="a"><button class="big go" id="chk">🔊 다 읽었어요, 확인!</button></div>
-      <div class="row" id="b" hidden><button class="big alt" id="more">🔁 한 번 더</button><button class="big go" id="ok">⭕ 잘 읽었어요!</button></div>`;
-    const play = ()=>sayOne('이제 혼자 읽어 봐요!'); play(); $('#again').onclick = play;
-    $('#chk').onclick = async ()=>{ $('#a').hidden = true; $('#b').hidden = false; await readAll(); };
-    $('#more').onclick = s3;
-    $('#ok').onclick = ()=>{ good($('#ok')); step++; ask(0); };
+  /* back to the guess made before reading */
+  function checkPre(){
+    const hit = pick === x.pre.a;
+    stage.innerHTML = `${bar()}${tag('미리 짐작 확인')}${bear('아까 고른 짐작, 맞았을까요?')}
+      <div class="r3picks">${preOpts.map((o,k)=>`<div class="r3pick ${o===pick?'chosen':''} ${o===x.pre.a?'answer':''}"><span class="pn">${k+1}</span><span>${esc(o)}</span>${o===pick?'<span class="mine">내 짐작</span>':''}</div>`).join('')}</div>
+      <div class="row"><button class="big go" id="nx">질문하러 가기 ➜</button></div>`;
+    const play = async()=>{ await sayOne('아까 고른 짐작, 맞았을까요?'); await wait(300); if(hit){ good(stage.querySelector('.r3pick.answer')); await say('짐작이 맞았어요!'); } else { await say('글을 읽고 새로 알게 됐어요!'); } await wait(200); await say(x.pre.a); };
+    play(); $('#again').onclick = play;
+    $('#nx').onclick = ()=>ask(0);
   }
   /* 4. 질문 — runs x.qs in order, then 내 생각 */
   function ask(n){
@@ -201,7 +219,7 @@ function r3Lesson(u, x){
     $('#peek').onclick = ()=>{ $('#peekBox').hidden = !$('#peekBox').hidden; };
     $('#fin').onclick = ()=>r3Done(u, x);
   }
-  s1();
+  s0();
 }
 
 function r3Done(u, x){
@@ -255,4 +273,14 @@ function r3Done(u, x){
 .r3tile{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:12px 18px;font-family:var(--f-ko);font-size:clamp(19px,3.2vmin,26px);display:flex;align-items:center;gap:12px;text-align:left;word-break:keep-all}
 .r3tile.used{opacity:.25}
 .te{font-size:1.5em;line-height:1}
+.r3pre{display:flex;flex-direction:column;align-items:center;gap:8px}
+.r3pre .em{font-size:clamp(80px,16vmin,130px);line-height:1}
+.r3pre .pt{font-family:var(--f-ko);font-size:clamp(28px,5vmin,44px);color:var(--ink)}
+.r3pre .r3kind{font-family:var(--f-ko);font-size:16px}
+.r3picks{display:flex;flex-direction:column;gap:12px;width:min(680px,100%)}
+.r3pick{background:var(--card);border-radius:22px;box-shadow:var(--shadow);padding:16px 20px;font-family:var(--f-ko);font-size:clamp(20px,3.4vmin,28px);display:flex;align-items:center;gap:14px;text-align:left;word-break:keep-all;position:relative}
+.r3pick .pn{flex:none;width:44px;height:44px;border-radius:50%;background:var(--tile);display:flex;align-items:center;justify-content:center;font-family:var(--f-display);font-weight:700;font-size:24px}
+.r3pick.chosen{outline:4px solid var(--blue)}
+.r3pick.answer{background:#DDF6E7;outline:4px solid var(--good)}
+.r3pick .mine{margin-left:auto;flex:none;font-size:15px;background:var(--blue);color:#fff;border-radius:999px;padding:3px 10px}
 `; document.head.appendChild(st); })();
