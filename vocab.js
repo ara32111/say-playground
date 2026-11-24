@@ -72,8 +72,11 @@ function koHome(){
       <button class="weekbtn" id="goL2"><span class="wem" aria-hidden="true">🌳</span>
         <span style="min-width:0"><span class="lbl-s">2단계</span><span class="t">어휘 키우기</span><span class="k">움직임 · 꾸미는 말 · 마음 · 높임말</span></span>
         <span class="meter"><b>🍃</b>${l2g}/${l2n}</span></button>
+      ${typeof r3Home==='function' ? `<button class="weekbtn" id="goL3"><span class="wem" aria-hidden="true">📖</span>
+        <span style="min-width:0"><span class="lbl-s">3단계 · NEW</span><span class="t">짧은 글 읽기</span><span class="k">당연한 것을 당연하게 읽어요</span></span>
+        <span class="meter"><b>⭐</b>${Object.keys(r3State().done).length}</span></button>` : ''}
     </div>`;
-  $('#goL1').onclick = koL1; $('#goL2').onclick = v2Home;
+  $('#goL1').onclick = koL1; $('#goL2').onclick = v2Home; if($('#goL3')) $('#goL3').onclick = r3Home;
 }
 
 function v2Home(){
